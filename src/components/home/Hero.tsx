@@ -113,7 +113,7 @@ const Hero: React.FC = () => {
   const currentSlideData = slides[currentSlide];
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden">
+    <div className="relative min-h-screen flex flex-col overflow-hidden mt-16">
       {/* Background Images with Slide Effect */}
       <div className="absolute inset-0 z-0">
         <div className="relative w-full h-full overflow-hidden">

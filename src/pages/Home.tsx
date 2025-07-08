@@ -6,7 +6,7 @@ import Testimonials from '../components/home/Testimonials';
 
 const Home: React.FC = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-0">
       <Hero />
       <FeaturedTours />
       <WhyChooseUs />

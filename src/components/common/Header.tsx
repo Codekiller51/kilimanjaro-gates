@@ -183,15 +183,17 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className={`fixed w-full z-40 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-lg top-0' : 'bg-white/95 backdrop-blur-sm top-10'
+        isScrolled ? 'bg-white shadow-lg top-0' : 'bg-white/95 backdrop-blur-sm top-0'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center">
-                <Mountain className="h-6 w-6 text-white" />
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Kilimanjaro Gates Logo" 
+                className="h-12 w-auto"
+              />
               <span className="text-xl font-bold text-gray-900">
                 Kilimanjaro Gates
               </span>
