@@ -190,7 +190,7 @@ const Header: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
               <img 
-                src="/logo.png" 
+                src="https://kilimanjarogates.com/wp-content/uploads/2025/06/cropped-Gemini_Generated_Image_k5g4bek5g4bek5g4.png" 
                 alt="Kilimanjaro Gates Logo" 
                 className="h-12 w-auto"
               />
