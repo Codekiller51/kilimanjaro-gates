@@ -7,7 +7,6 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -35,41 +34,49 @@ const Header: React.FC = () => {
   const navigation = [
     { name: 'Home', href: '/' },
     {
-      name: 'Safari and Tours',
+      name: 'Safaris & Tours',
       href: '/tours',
-      dropdown: [
+      megaMenu: [
         {
-          category: 'Kilimanjaro climbing packages',
+          category: 'Kilimanjaro Climbing Packages',
           items: [
-            { name: 'Machame Route', href: '/tours/mountain-climbing/machame' },
-            { name: 'Marangu Route', href: '/tours/mountain-climbing/marangu' },
-            { name: 'Lemosho Route', href: '/tours/mountain-climbing/lemosho' },
-            { name: 'Rongai Route', href: '/tours/mountain-climbing/rongai' }
+            { name: 'Machame Route (7 Days)', href: '/tours/mountain-climbing/machame' },
+            { name: 'Marangu Route (6 Days)', href: '/tours/mountain-climbing/marangu' },
+            { name: 'Lemosho Route (8 Days)', href: '/tours/mountain-climbing/lemosho' },
+            { name: 'Rongai Route (7 Days)', href: '/tours/mountain-climbing/rongai' },
+            { name: 'Northern Circuit (9 Days)', href: '/tours/mountain-climbing/northern' },
+            { name: 'Umbwe Route (6 Days)', href: '/tours/mountain-climbing/umbwe' }
           ]
         },
         {
-          category: 'Wildlife safari',
+          category: 'Wildlife Safari',
           items: [
-            { name: 'Serengeti Safari', href: '/tours/safari/serengeti' },
+            { name: 'Serengeti National Park', href: '/tours/safari/serengeti' },
             { name: 'Ngorongoro Crater', href: '/tours/safari/ngorongoro' },
-            { name: 'Tarangire Safari', href: '/tours/safari/tarangire' },
-            { name: 'Lake Manyara', href: '/tours/safari/manyara' }
+            { name: 'Tarangire National Park', href: '/tours/safari/tarangire' },
+            { name: 'Lake Manyara', href: '/tours/safari/manyara' },
+            { name: 'Ruaha National Park', href: '/tours/safari/ruaha' },
+            { name: 'Selous Game Reserve', href: '/tours/safari/selous' }
           ]
         },
         {
-          category: 'Daytrips and safari camps',
+          category: 'Day Trips & Safari Camps',
           items: [
-            { name: 'Cultural Tours', href: '/tours/day-trips/cultural' },
-            { name: 'Coffee Tours', href: '/tours/day-trips/coffee' },
-            { name: 'Waterfall Hikes', href: '/tours/day-trips/waterfalls' }
+            { name: 'Cultural Village Tours', href: '/tours/day-trips/cultural' },
+            { name: 'Coffee Plantation Tours', href: '/tours/day-trips/coffee' },
+            { name: 'Waterfall Hikes', href: '/tours/day-trips/waterfalls' },
+            { name: 'Hot Springs', href: '/tours/day-trips/hot-springs' },
+            { name: 'Maasai Boma Visit', href: '/tours/day-trips/maasai' }
           ]
         },
         {
           category: 'Zanzibar Trips',
           items: [
-            { name: 'Stone Town Tour', href: '/tours/zanzibar/stone-town' },
-            { name: 'Spice Tours', href: '/tours/zanzibar/spice' },
-            { name: 'Beach Holidays', href: '/tours/zanzibar/beach' }
+            { name: 'Stone Town Historical Tour', href: '/tours/zanzibar/stone-town' },
+            { name: 'Spice Farm Tours', href: '/tours/zanzibar/spice' },
+            { name: 'Beach Holiday Packages', href: '/tours/zanzibar/beach' },
+            { name: 'Dolphin Tours', href: '/tours/zanzibar/dolphin' },
+            { name: 'Prison Island', href: '/tours/zanzibar/prison-island' }
           ]
         }
       ]
@@ -77,21 +84,32 @@ const Header: React.FC = () => {
     {
       name: 'Destinations',
       href: '/destinations',
-      dropdown: [
+      megaMenu: [
         {
           category: 'Mount Kilimanjaro',
           items: [
-            { name: 'Uhuru Peak', href: '/destinations/kilimanjaro/uhuru-peak' },
-            { name: 'Stella Point', href: '/destinations/kilimanjaro/stella-point' }
+            { name: 'Uhuru Peak (5,895m)', href: '/destinations/kilimanjaro/uhuru-peak' },
+            { name: 'Stella Point (5,756m)', href: '/destinations/kilimanjaro/stella-point' },
+            { name: 'Gilman\'s Point (5,681m)', href: '/destinations/kilimanjaro/gilmans-point' },
+            { name: 'Barranco Wall', href: '/destinations/kilimanjaro/barranco-wall' }
           ]
         },
         {
           category: 'National Parks',
           items: [
             { name: 'Serengeti National Park', href: '/destinations/serengeti' },
-            { name: 'Ngorongoro Crater', href: '/destinations/ngorongoro' },
-            { name: 'Bagamoyo', href: '/destinations/bagamoyo' },
-            { name: 'Lake Manyara', href: '/destinations/manyara' }
+            { name: 'Ngorongoro Conservation Area', href: '/destinations/ngorongoro' },
+            { name: 'Tarangire National Park', href: '/destinations/tarangire' },
+            { name: 'Lake Manyara National Park', href: '/destinations/manyara' },
+            { name: 'Arusha National Park', href: '/destinations/arusha' }
+          ]
+        },
+        {
+          category: 'Cultural Sites',
+          items: [
+            { name: 'Bagamoyo Historical Town', href: '/destinations/bagamoyo' },
+            { name: 'Olduvai Gorge', href: '/destinations/olduvai' },
+            { name: 'Maasai Villages', href: '/destinations/maasai-villages' }
           ]
         }
       ]
@@ -103,7 +121,9 @@ const Header: React.FC = () => {
         { name: 'Our Story', href: '/about/story' },
         { name: 'Our Team', href: '/about/team' },
         { name: 'Why Choose Us', href: '/about/why-choose-us' },
-        { name: 'Gallery', href: '/gallery' }
+        { name: 'Testimonials', href: '/about/testimonials' },
+        { name: 'Gallery', href: '/gallery' },
+        { name: 'Certifications', href: '/about/certifications' }
       ]
     },
     {
@@ -112,21 +132,15 @@ const Header: React.FC = () => {
       dropdown: [
         { name: 'Travel Tips', href: '/travel-info/tips' },
         { name: 'What to Pack', href: '/travel-info/packing' },
-        { name: 'Visa & Entry', href: '/travel-info/visa' },
+        { name: 'Visa & Entry Requirements', href: '/travel-info/visa' },
         { name: 'Best Time to Visit', href: '/travel-info/best-time' },
-        { name: 'Health and Safety', href: '/travel-info/health-safety' }
+        { name: 'Health and Safety', href: '/travel-info/health-safety' },
+        { name: 'Currency & Payments', href: '/travel-info/currency' },
+        { name: 'Weather Information', href: '/travel-info/weather' }
       ]
     },
     { name: 'Contact Us', href: '/contact' }
   ];
-
-  const handleDropdownToggle = (name: string) => {
-    setActiveDropdown(activeDropdown === name ? null : name);
-  };
-
-  const closeDropdown = () => {
-    setActiveDropdown(null);
-  };
 
   return (
     <>
@@ -145,7 +159,11 @@ const Header: React.FC = () => {
               </div>
               <div className="hidden md:flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span>Moshi, Tanzania</span>
+                <span>Arusha, Tanzania</span>
+              </div>
+              <div className="hidden md:flex items-center space-x-2 text-green-400">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span>WhatsApp</span>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -165,84 +183,110 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className={`fixed w-full z-40 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-lg top-0' : 'bg-transparent top-10'
+        isScrolled ? 'bg-white shadow-lg top-0' : 'bg-white/95 backdrop-blur-sm top-10'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <Mountain className={`h-8 w-8 ${isScrolled ? 'text-orange-600' : 'text-white'}`} />
-              <span className={`text-xl font-bold ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
+              <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center">
+                <Mountain className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gray-900">
                 Kilimanjaro Gates
               </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-8">
+            <nav className="hidden lg:flex items-center space-x-8">
               {navigation.map((item) => (
-                <div key={item.name} className="relative">
-                  {item.dropdown ? (
-                    <button
-                      onClick={() => handleDropdownToggle(item.name)}
-                      className={`flex items-center space-x-1 transition-colors duration-200 ${
-                        location.pathname.startsWith(item.href)
-                          ? isScrolled 
-                            ? 'text-orange-600 font-semibold' 
-                            : 'text-orange-300 font-semibold'
-                          : isScrolled
-                            ? 'text-gray-700 hover:text-orange-600'
-                            : 'text-white hover:text-orange-300'
-                      }`}
-                    >
-                      <span>{item.name}</span>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${
-                        activeDropdown === item.name ? 'rotate-180' : ''
-                      }`} />
-                    </button>
+                <div key={item.name} className="relative group">
+                  {item.megaMenu || item.dropdown ? (
+                    <div className="relative">
+                      <Link
+                        to={item.href}
+                        className={`flex items-center space-x-1 py-2 transition-colors duration-200 ${
+                          location.pathname.startsWith(item.href) && item.href !== '/'
+                            ? 'text-orange-600 font-semibold border-b-2 border-orange-600'
+                            : location.pathname === item.href && item.href === '/'
+                            ? 'text-orange-600 font-semibold border-b-2 border-orange-600'
+                            : 'text-gray-700 hover:text-orange-600'
+                        }`}
+                      >
+                        <span>{item.name}</span>
+                        <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                      </Link>
+
+                      {/* Mega Menu */}
+                      {item.megaMenu && (
+                        <div className="absolute top-full left-0 mt-0 w-screen max-w-4xl bg-white rounded-lg shadow-2xl border border-gray-200 py-8 px-8 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                            {item.megaMenu.map((section, index) => (
+                              <div key={index}>
+                                <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide border-b border-orange-200 pb-2">
+                                  {section.category}
+                                </h3>
+                                <div className="space-y-2">
+                                  {section.items.map((subItem, subIndex) => (
+                                    <Link
+                                      key={subIndex}
+                                      to={subItem.href}
+                                      className="block px-3 py-2 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors"
+                                    >
+                                      {subItem.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Featured Call-to-Action */}
+                          <div className="mt-8 pt-6 border-t border-gray-200">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="font-semibold text-gray-900">Need Help Planning?</h4>
+                                <p className="text-sm text-gray-600">Speak with our travel experts</p>
+                              </div>
+                              <Link
+                                to="/contact"
+                                className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium"
+                              >
+                                Contact Us
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Regular Dropdown */}
+                      {item.dropdown && (
+                        <div className="absolute top-full left-0 mt-0 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                          <div className="px-4">
+                            {item.dropdown.map((subItem, index) => (
+                              <Link
+                                key={index}
+                                to={subItem.href}
+                                className="block px-3 py-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors"
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <Link
                       to={item.href}
-                      className={`transition-colors duration-200 ${
+                      className={`py-2 transition-colors duration-200 ${
                         location.pathname === item.href
-                          ? isScrolled 
-                            ? 'text-orange-600 font-semibold' 
-                            : 'text-orange-300 font-semibold'
-                          : isScrolled
-                            ? 'text-gray-700 hover:text-orange-600'
-                            : 'text-white hover:text-orange-300'
+                          ? 'text-orange-600 font-semibold border-b-2 border-orange-600'
+                          : 'text-gray-700 hover:text-orange-600'
                       }`}
                     >
                       {item.name}
                     </Link>
-                  )}
-
-                  {/* Dropdown Menu */}
-                  {item.dropdown && activeDropdown === item.name && (
-                    <div className="absolute top-full left-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 py-4 z-50">
-                      <div className="grid grid-cols-1 gap-4 px-4">
-                        {item.dropdown.map((section, index) => (
-                          <div key={index}>
-                            {section.category && (
-                              <h3 className="font-semibold text-gray-900 mb-2 text-sm uppercase tracking-wide">
-                                {section.category}
-                              </h3>
-                            )}
-                            <div className="space-y-1">
-                              {(section.items || [section]).map((subItem: any, subIndex: number) => (
-                                <Link
-                                  key={subIndex}
-                                  to={subItem.href}
-                                  onClick={closeDropdown}
-                                  className="block px-3 py-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors"
-                                >
-                                  {subItem.name}
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   )}
                 </div>
               ))}
@@ -254,18 +298,14 @@ const Header: React.FC = () => {
                 <div className="flex items-center space-x-4">
                   <Link 
                     to="/profile" 
-                    className={`flex items-center space-x-2 ${
-                      isScrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white hover:text-orange-300'
-                    }`}
+                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600"
                   >
                     <User className="h-5 w-5" />
                     <span>Profile</span>
                   </Link>
                   <button
                     onClick={handleSignOut}
-                    className={`flex items-center space-x-2 ${
-                      isScrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white hover:text-orange-300'
-                    }`}
+                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600"
                   >
                     <LogOut className="h-5 w-5" />
                     <span>Sign Out</span>
@@ -275,9 +315,7 @@ const Header: React.FC = () => {
                 <div className="flex items-center space-x-4">
                   <Link 
                     to="/login" 
-                    className={`${
-                      isScrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white hover:text-orange-300'
-                    }`}
+                    className="text-gray-700 hover:text-orange-600"
                   >
                     Sign In
                   </Link>
@@ -285,7 +323,7 @@ const Header: React.FC = () => {
                     to="/register" 
                     className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
                   >
-                    Sign Up
+                    Book your trip
                   </Link>
                 </div>
               )}
@@ -297,9 +335,9 @@ const Header: React.FC = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? (
-                <X className={`h-6 w-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
+                <X className="h-6 w-6 text-gray-900" />
               ) : (
-                <Menu className={`h-6 w-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
+                <Menu className="h-6 w-6 text-gray-900" />
               )}
             </button>
           </div>
@@ -310,56 +348,54 @@ const Header: React.FC = () => {
               <div className="px-2 pt-2 pb-3 space-y-1 max-h-96 overflow-y-auto">
                 {navigation.map((item) => (
                   <div key={item.name}>
-                    {item.dropdown ? (
-                      <div>
-                        <button
-                          onClick={() => handleDropdownToggle(item.name)}
-                          className="flex items-center justify-between w-full px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50"
-                        >
-                          <span>{item.name}</span>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${
-                            activeDropdown === item.name ? 'rotate-180' : ''
-                          }`} />
-                        </button>
-                        {activeDropdown === item.name && (
-                          <div className="pl-4 space-y-1">
-                            {item.dropdown.map((section, index) => (
-                              <div key={index}>
-                                {section.category && (
-                                  <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                                    {section.category}
-                                  </div>
-                                )}
-                                {(section.items || [section]).map((subItem: any, subIndex: number) => (
-                                  <Link
-                                    key={subIndex}
-                                    to={subItem.href}
-                                    className="block px-3 py-2 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50"
-                                    onClick={() => setIsMenuOpen(false)}
-                                  >
-                                    {subItem.name}
-                                  </Link>
-                                ))}
-                              </div>
+                    <Link
+                      to={item.href}
+                      className={`block px-3 py-2 text-base font-medium ${
+                        location.pathname === item.href
+                          ? 'text-orange-600 bg-orange-50'
+                          : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                    
+                    {/* Mobile Submenu */}
+                    {(item.megaMenu || item.dropdown) && (
+                      <div className="pl-4 space-y-1">
+                        {item.megaMenu && item.megaMenu.map((section, index) => (
+                          <div key={index}>
+                            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                              {section.category}
+                            </div>
+                            {section.items.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                to={subItem.href}
+                                className="block px-3 py-2 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                {subItem.name}
+                              </Link>
                             ))}
                           </div>
-                        )}
+                        ))}
+                        
+                        {item.dropdown && item.dropdown.map((subItem, index) => (
+                          <Link
+                            key={index}
+                            to={subItem.href}
+                            className="block px-3 py-2 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {subItem.name}
+                          </Link>
+                        ))}
                       </div>
-                    ) : (
-                      <Link
-                        to={item.href}
-                        className={`block px-3 py-2 text-base font-medium ${
-                          location.pathname === item.href
-                            ? 'text-orange-600 bg-orange-50'
-                            : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
-                        }`}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {item.name}
-                      </Link>
                     )}
                   </div>
                 ))}
+                
                 <div className="border-t pt-2">
                   {user ? (
                     <>
@@ -394,7 +430,7 @@ const Header: React.FC = () => {
                         className="block px-3 py-2 text-base font-medium text-white bg-orange-600 hover:bg-orange-700"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Sign Up
+                        Book your trip
                       </Link>
                     </>
                   )}
@@ -404,14 +440,6 @@ const Header: React.FC = () => {
           )}
         </div>
       </header>
-
-      {/* Overlay to close dropdown when clicking outside */}
-      {activeDropdown && (
-        <div 
-          className="fixed inset-0 z-30" 
-          onClick={closeDropdown}
-        ></div>
-      )}
     </>
   );
 };
