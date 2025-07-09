@@ -139,81 +139,79 @@ const Testimonials: React.FC = () => {
         {/* Featured Testimonial Carousel */}
         {featuredReviews.length > 0 && (
           <div className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Stories</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Highlighted experiences that showcase the transformative power of adventure
-            </p>
-          </div>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Stories</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Highlighted experiences that showcase the transformative power of adventure
+              </p>
+            </div>
 
-          <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="relative h-96 md:h-80">
-              {featuredReviews.map((review, index) => (
-                <div
-                  key={review.id}
-                  className={`absolute inset-0 transition-opacity duration-500 ${
-                    index === currentTestimonial ? 'opacity-100' : 'opacity-0'
-                  }`}
-                >
-                  <div className="h-full flex items-center">
-                    <div className="w-full px-8 md:px-16 py-8">
-                      <Quote className="h-12 w-12 text-orange-200 mb-6" />
-                      <div className="flex items-center space-x-1 mb-4">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <Star key={i} className="h-6 w-6 text-yellow-400 fill-current" />
-                        ))}
-                      </div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">{review.title}</h3>
-                      <p className="text-gray-600 text-lg leading-relaxed mb-6 line-clamp-4">
-                        "{review.content}"
-                      </p>
-                      <div className="flex items-center space-x-4">
-                        <img
-                          src={review.profiles?.avatar_url || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150'}
-                          alt={review.profiles?.full_name}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                        <div>
-                          <div className="font-semibold text-gray-900">{review.profiles?.full_name}</div>
-                          <div className="text-sm text-gray-500">{review.profiles?.nationality || 'Traveler'}</div>
-                          <div className="text-sm text-orange-600">{review.tour_packages?.title}</div>
+            <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div className="relative h-96 md:h-80">
+                {featuredReviews.map((review, index) => (
+                  <div
+                    key={review.id}
+                    className={`absolute inset-0 transition-opacity duration-500 ${
+                      index === currentTestimonial ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  >
+                    <div className="h-full flex items-center">
+                      <div className="w-full px-8 md:px-16 py-8">
+                        <Quote className="h-12 w-12 text-orange-200 mb-6" />
+                        <div className="flex items-center space-x-1 mb-4">
+                          {[...Array(review.rating)].map((_, i) => (
+                            <Star key={i} className="h-6 w-6 text-yellow-400 fill-current" />
+                          ))}
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">{review.title}</h3>
+                        <p className="text-gray-600 text-lg leading-relaxed mb-6 line-clamp-4">
+                          "{review.content}"
+                        </p>
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={review.profiles?.avatar_url || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150'}
+                            alt={review.profiles?.full_name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                          <div>
+                            <div className="font-semibold text-gray-900">{review.profiles?.full_name}</div>
+                            <div className="text-sm text-gray-500">{review.profiles?.nationality || 'Traveler'}</div>
+                            <div className="text-sm text-orange-600">{review.tour_packages?.title}</div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            {/* Navigation */}
-            <button
-              onClick={prevTestimonial}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg"
-            >
-              <ChevronLeft className="h-6 w-6 text-gray-600" />
-            </button>
-            <button
-              onClick={nextTestimonial}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg"
-            >
-              <ChevronRight className="h-6 w-6 text-gray-600" />
-            </button>
+              {/* Navigation */}
+              <button
+                onClick={prevTestimonial}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg"
+              >
+                <ChevronLeft className="h-6 w-6 text-gray-600" />
+              </button>
+              <button
+                onClick={nextTestimonial}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg"
+              >
+                <ChevronRight className="h-6 w-6 text-gray-600" />
+              </button>
 
-            {/* Indicators */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {featuredReviews.map((_, index) => (
-            <div className="text-gray-500 text-lg">
-              {reviews.length === 0 ? 'No reviews available yet.' : 'No reviews found matching your criteria.'}
+              {/* Indicators */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {featuredReviews.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTestimonial(index)}
+                    className={`w-3 h-3 rounded-full transition-colors ${
+                      index === currentTestimonial ? 'bg-orange-600' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentTestimonial ? 'bg-orange-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-              {reviews.length === 0 ? 'Be the first to leave a review!' : 'Clear filters to see all reviews'}
-          </div>
           </div>
         )}
 
@@ -296,7 +294,9 @@ const Testimonials: React.FC = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="text-gray-500 text-lg">No reviews found matching your criteria.</div>
+              <div className="text-gray-500 text-lg">
+                {reviews.length === 0 ? 'No reviews available yet.' : 'No reviews found matching your criteria.'}
+              </div>
               <button
                 onClick={() => {
                   setSearchTerm('');
@@ -304,7 +304,7 @@ const Testimonials: React.FC = () => {
                 }}
                 className="mt-4 text-orange-600 hover:text-orange-700"
               >
-                Clear filters to see all reviews
+                {reviews.length === 0 ? 'Be the first to leave a review!' : 'Clear filters to see all reviews'}
               </button>
             </div>
           )}
