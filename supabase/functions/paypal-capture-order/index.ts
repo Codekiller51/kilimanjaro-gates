@@ -1,5 +1,4 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,7 +11,7 @@ interface CaptureOrderRequest {
   booking_data: any;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -27,7 +26,21 @@ serve(async (req) => {
     const PAYPAL_BASE_URL = Deno.env.get('PAYPAL_BASE_URL') || 'https://api-m.sandbox.paypal.com'
 
     if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
-      throw new Error('PayPal credentials not configured')
+      console.error('PayPal credentials missing:', {
+        PAYPAL_CLIENT_ID: PAYPAL_CLIENT_ID ? 'present' : 'missing',
+        PAYPAL_CLIENT_SECRET: PAYPAL_CLIENT_SECRET ? 'present' : 'missing'
+      })
+      
+      return new Response(
+        JSON.stringify({
+          error: 'PayPal credentials not configured',
+          message: 'Please configure PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET in Supabase Edge Function environment variables'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        },
+      )
     }
 
     // Get PayPal access token
@@ -41,6 +54,8 @@ serve(async (req) => {
     })
 
     if (!authResponse.ok) {
+      const errorText = await authResponse.text()
+      console.error('PayPal auth failed:', errorText)
       throw new Error('Failed to get PayPal access token')
     }
 
