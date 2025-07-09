@@ -19,6 +19,7 @@ export const auth = {
         data: {
           full_name: fullName,
         },
+        emailRedirectTo: `${window.location.origin}/profile`,
       },
     });
     return { data, error };
