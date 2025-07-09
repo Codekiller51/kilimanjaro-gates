@@ -45,6 +45,7 @@ const RegisterForm: React.FC = () => {
           data: {
             full_name: data.fullName,
           },
+          emailRedirectTo: `${window.location.origin}/profile`,
         },
       });
       
