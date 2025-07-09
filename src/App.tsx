@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { usePageTransition } from './hooks/usePageTransition';
 import LoadingScreen from './components/common/LoadingScreen';
+import PageTransition from './components/common/PageTransition';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import Home from './pages/Home';
@@ -19,24 +21,11 @@ import WhyChooseUs from './pages/about/WhyChooseUs';
 import Testimonials from './pages/about/Testimonials';
 import Certifications from './pages/about/Certifications';
 
-function App() {
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+function AppContent() {
+  const { isLoading } = usePageTransition();
 
   return (
-    <Router>
+    <PageTransition isLoading={isLoading}>
       <div className="min-h-screen bg-gray-100">
         <Header />
         <main>
@@ -61,6 +50,29 @@ function App() {
         </main>
         <Footer />
       </div>
+    </PageTransition>
+  );
+}
+
+function App() {
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

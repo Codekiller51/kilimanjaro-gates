@@ -1,5 +1,4 @@
 import React from 'react';
-import { Mountain, Plane, Camera, Compass } from 'lucide-react';
 
 const LoadingScreen: React.FC = () => {
   return (
@@ -15,55 +14,55 @@ const LoadingScreen: React.FC = () => {
       <div className="text-center text-white relative z-10">
         {/* Logo and Brand */}
         <div className="mb-8">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <Mountain className="h-12 w-12 text-white animate-bounce" />
-            <h1 className="text-4xl md:text-5xl font-bold">Kilimanjaro Gates</h1>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Kilimanjaro Gates</h1>
           <p className="text-xl md:text-2xl font-light opacity-90">
             Your Gateway to Tanzania's Adventures
           </p>
         </div>
 
-        {/* Animated Icons */}
-        <div className="flex justify-center space-x-8 mb-8">
-          <div className="animate-bounce delay-100">
-            <Plane className="h-8 w-8 text-white opacity-80" />
-          </div>
-          <div className="animate-bounce delay-300">
-            <Camera className="h-8 w-8 text-white opacity-80" />
-          </div>
-          <div className="animate-bounce delay-500">
-            <Compass className="h-8 w-8 text-white opacity-80" />
+        {/* Spinning Globe */}
+        <div className="flex justify-center mb-8">
+          <div className="relative w-32 h-32">
+            {/* Globe Base */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 via-green-400 to-blue-500 animate-spin-slow shadow-2xl">
+              {/* Continents */}
+              <div className="absolute top-4 left-6 w-8 h-6 bg-green-600 rounded-full opacity-80"></div>
+              <div className="absolute top-8 right-4 w-6 h-4 bg-green-600 rounded-full opacity-80"></div>
+              <div className="absolute bottom-6 left-8 w-10 h-5 bg-green-600 rounded-full opacity-80"></div>
+              <div className="absolute bottom-8 right-6 w-4 h-6 bg-green-600 rounded-full opacity-80"></div>
+              
+              {/* Highlight */}
+              <div className="absolute top-2 left-4 w-6 h-6 bg-white rounded-full opacity-30 blur-sm"></div>
+            </div>
+            
+            {/* Orbit Ring */}
+            <div className="absolute inset-0 rounded-full border-2 border-white border-opacity-30 animate-pulse"></div>
+            
+            {/* Rotating Ring */}
+            <div className="absolute inset-0 rounded-full border-t-2 border-white animate-spin"></div>
           </div>
         </div>
 
         {/* Loading Animation */}
         <div className="relative">
           <div className="flex justify-center space-x-2 mb-4">
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse delay-150"></div>
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse delay-300"></div>
+            <div className="w-3 h-3 bg-white rounded-full animate-bounce"></div>
+            <div className="w-3 h-3 bg-white rounded-full animate-bounce delay-150"></div>
+            <div className="w-3 h-3 bg-white rounded-full animate-bounce delay-300"></div>
           </div>
           <p className="text-lg font-medium opacity-90">
             Preparing your adventure...
           </p>
         </div>
-
-        {/* Progress Bar */}
-        <div className="mt-8 max-w-xs mx-auto">
-          <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
-            <div className="bg-white h-2 rounded-full animate-pulse" style={{
-              animation: 'loading 2s ease-in-out infinite'
-            }}></div>
-          </div>
-        </div>
       </div>
 
       <style jsx>{`
-        @keyframes loading {
-          0% { width: 0% }
-          50% { width: 70% }
-          100% { width: 100% }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 4s linear infinite;
         }
       `}</style>
     </div>
