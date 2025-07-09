@@ -204,7 +204,7 @@ const Hero: React.FC = () => {
   const currentSlideData = slides[currentSlide];
 
   return (
-    <div className={`relative min-h-screen flex flex-col overflow-hidden transition-all duration-300 ${
+    <div className={`relative min-h-screen flex flex-col overflow-hidden transition-all duration-300 pt-16 ${
       isScrolled ? 'mt-16' : 'mt-26'
     }`}>
       {/* Background Images with Slide Effect */}
@@ -321,10 +321,10 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Search Form */}
-      <div className="relative z-10 pb-8">
+      <div className="relative z-10 pb-8 mt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-            <div className="flex items-center mb-6">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mt-8">
+            <div className="flex items-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-orange-600 mr-4">Find Your Tour</h2>
               <div className="text-sm text-gray-500">
                 Search from {destinations.length} destinations
