@@ -43,7 +43,7 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
           if (error) throw error;
           data = tourReviews;
         } else {
-          const { data: allReviews, error } = await db.getAllReviews(undefined, undefined, limit);
+          const { data: allReviews, error } = await db.getAllReviews(limit, undefined, true);
           if (error) throw error;
           data = allReviews;
         }

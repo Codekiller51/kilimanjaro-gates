@@ -16,7 +16,8 @@ const TourCard: React.FC<TourCardProps> = ({ tour, featured = false }) => {
   React.useEffect(() => {
     const fetchRating = async () => {
       try {
-        const { averageRating: rating, totalReviews: count } = await db.getTourAverageRating(tour.id);
+        const { averageRating: rating, totalReviews: count, error } = await db.getTourAverageRating(tour.id);
+        if (error) throw error;
         setAverageRating(rating);
         setTotalReviews(count);
       } catch (error) {

@@ -41,7 +41,7 @@ const Testimonials: React.FC = () => {
     const fetchData = async () => {
       try {
         // Fetch all reviews
-        const { data: allReviews, error: reviewsError } = await db.getAllReviews();
+        const { data: allReviews, error: reviewsError } = await db.getAllReviews(undefined, undefined, true);
         if (reviewsError) throw reviewsError;
         setReviews(allReviews || []);
 

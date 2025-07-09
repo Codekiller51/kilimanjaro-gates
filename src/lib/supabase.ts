@@ -102,11 +102,11 @@ export const db = {
     if (error) return { data: null, error };
 
     if (!data || data.length === 0) {
-      return { data: { average: 0, count: 0 }, error: null };
+      return { averageRating: 0, totalReviews: 0, error: null };
     }
 
     const average = data.reduce((sum, review) => sum + review.rating, 0) / data.length;
-    return { data: { average: Math.round(average * 10) / 10, count: data.length }, error: null };
+    return { averageRating: Math.round(average * 10) / 10, totalReviews: data.length, error: null };
   },
 
   // Booking operations
@@ -145,14 +145,48 @@ export const db = {
   },
 
   // Review operations
-  getAllReviews: async () => {
+  getAllReviews: async (limit?: number, offset?: number, verifiedOnly: boolean = true) => {
+    let query = supabase
+      .from('reviews')
+      .select(`
+        *,
+        profiles (
+          full_name,
+          avatar_url,
+          nationality
+        ),
+        tour_packages (
+          title,
+          category
+        )
+      `);
+    
+    if (verifiedOnly) {
+      query = query.eq('verified', true);
+    }
+    
+    query = query.order('created_at', { ascending: false });
+    
+    if (limit) {
+      query = query.limit(limit);
+    }
+    
+    if (offset) {
+      query = query.range(offset, offset + (limit || 10) - 1);
+    }
+    
+    return await query;
+  },
+
+  getFeaturedReviews: async (limit: number = 3) => {
     return await supabase
       .from('reviews')
       .select(`
         *,
         profiles (
           full_name,
-          avatar_url
+          avatar_url,
+          nationality
         ),
         tour_packages (
           title,
@@ -160,7 +194,9 @@ export const db = {
         )
       `)
       .eq('verified', true)
-      .order('created_at', { ascending: false });
+      .gte('rating', 4)
+      .order('created_at', { ascending: false })
+      .limit(limit);
   },
 
   getTourReviews: async (tourId: string) => {
@@ -192,7 +228,56 @@ export const db = {
       .order('created_at', { ascending: false });
   },
 
-  getReviewStats: async (tourId: string) => {
+  getReviewStats: async (tourId?: string) => {
+    let query = supabase
+      .from('reviews')
+      .select('rating')
+      .eq('verified', true);
+    
+    if (tourId) {
+      query = query.eq('tour_id', tourId);
+    }
+    
+    const { data, error } = await query;
+
+    if (error) return { averageRating: 0, totalReviews: 0, recommendationRate: 0, error };
+
+    if (!data || data.length === 0) {
+      return { 
+        averageRating: 0, 
+        totalReviews: 0, 
+        recommendationRate: 0,
+        distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        error: null 
+      };
+    }
+
+    const average = data.reduce((sum, review) => sum + review.rating, 0) / data.length;
+    const distribution = data.reduce((acc, review) => {
+      acc[review.rating] = (acc[review.rating] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    // Ensure all ratings 1-5 are represented
+    for (let i = 1; i <= 5; i++) {
+      if (!distribution[i]) distribution[i] = 0;
+    }
+
+    // Calculate recommendation rate (4+ star reviews)
+    const recommendationRate = data.length > 0 
+      ? Math.round((data.filter(review => review.rating >= 4).length / data.length) * 100)
+      : 0;
+
+    return { 
+      averageRating: Math.round(average * 10) / 10, 
+      totalReviews: data.length, 
+      recommendationRate,
+      distribution,
+      error: null 
+    };
+  },
+
+  getReviewStats_old: async (tourId: string) => {
     const { data, error } = await supabase
       .from('reviews')
       .select('rating')
@@ -410,11 +495,11 @@ export const admin: AdminOperations = {
   },
   
   // Review management
-  getAllReviews: async () => {
+  getAllReviews: async (verifiedOnly: boolean = false) => {
     await admin.checkAdminStatus();
     if (!admin.isAdmin) return { data: null, error: { message: 'Unauthorized' } };
     
-    return await supabase
+    let query = supabase
       .from('reviews')
       .select(`
         *,
@@ -426,8 +511,13 @@ export const admin: AdminOperations = {
           title,
           category
         )
-      `)
-      .order('created_at', { ascending: false });
+      `);
+    
+    if (verifiedOnly) {
+      query = query.eq('verified', true);
+    }
+    
+    return await query.order('created_at', { ascending: false });
   },
   
   verifyReview: async (id: string, verified: boolean) => {
