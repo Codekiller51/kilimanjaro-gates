@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { usePageTransition } from './hooks/usePageTransition';
 import LoadingScreen from './components/common/LoadingScreen';
 import PageTransition from './components/common/PageTransition';
@@ -24,6 +24,7 @@ import OurTeam from './pages/about/OurTeam';
 import WhyChooseUs from './pages/about/WhyChooseUs';
 import Testimonials from './pages/about/Testimonials';
 import Certifications from './pages/about/Certifications';
+import AdminRoutes from './pages/admin/AdminRoutes';
 
 function AppContent() {
   const { isLoading } = usePageTransition();
@@ -56,6 +57,7 @@ function AppContent() {
             <Route path="/about/why-choose-us" element={<WhyChooseUs />} />
             <Route path="/about/testimonials" element={<Testimonials />} />
             <Route path="/about/certifications" element={<Certifications />} />
+            <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>
         </main>
         <Footer />
