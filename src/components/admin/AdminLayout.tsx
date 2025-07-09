@@ -29,14 +29,21 @@ const AdminLayout: React.FC = () => {
   useEffect(() => {
     const checkAdmin = async () => {
       setIsLoading(true);
-      const user = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         navigate('/admin/login');
         return;
       }
       
-      const { data: profile } = await db.getProfile(user.id);
+      const { data: profile, error } = await db.getProfile(user.id);
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        navigate('/admin/login');
+        return;
+      }
+      
       if (!profile?.is_admin) {
         navigate('/admin/login');
         return;

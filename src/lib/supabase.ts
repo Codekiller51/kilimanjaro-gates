@@ -51,9 +51,6 @@ try {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Export auth for authentication operations
-export const auth = supabase.auth;
-
 // Database operations for client-side use
 export const db = {
   // Profile operations

@@ -43,7 +43,7 @@ const AdminLogin: React.FC = () => {
     setError(null);
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
@@ -55,7 +55,7 @@ const AdminLogin: React.FC = () => {
       }
       
       // Check if user is admin
-      const isAdmin = await admin?.checkAdminStatus();
+      const isAdmin = await admin.checkAdminStatus();
       
       if (!isAdmin) {
         await supabase.auth.signOut();
