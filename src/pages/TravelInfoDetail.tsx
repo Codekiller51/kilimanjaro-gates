@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Clock, 
-  Tag, 
-  CheckCircle, 
-  AlertTriangle, 
-  Info,
-  Share2,
-  Bookmark,
-  Print,
-  Download
-} from 'lucide-react';
+import { ArrowLeft, Clock, Tag, CheckCircle, AlertTriangle, Info, Share2, Bookmark, Printer as Print, Download } from 'lucide-react';
 
 const TravelInfoDetail: React.FC = () => {
   const { slug } = useParams();
