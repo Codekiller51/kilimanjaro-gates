@@ -19,6 +19,16 @@ interface HeroSlide {
 const Hero: React.FC = () => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [isTransitioning, setIsTransitioning] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const slides: HeroSlide[] = [
     {
@@ -113,7 +123,9 @@ const Hero: React.FC = () => {
   const currentSlideData = slides[currentSlide];
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden mt-24">
+    <div className={`relative min-h-screen flex flex-col overflow-hidden transition-all duration-300 ${
+      isScrolled ? 'mt-16' : 'mt-26'
+    }`}>
       {/* Background Images with Slide Effect */}
       <div className="absolute inset-0 z-0">
         <div className="relative w-full h-full overflow-hidden">

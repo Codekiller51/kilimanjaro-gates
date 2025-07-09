@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Mountain, User, LogOut, ChevronDown, Phone, Mail, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Menu, X, Mountain, User, LogOut, ChevronDown, Phone, Mail, MapPin, Facebook, Instagram, Twitter, ChevronRight } from 'lucide-react';
 import { auth } from '../../lib/supabase';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -29,6 +30,10 @@ const Header: React.FC = () => {
   const handleSignOut = async () => {
     await auth.signOut();
     setUser(null);
+  };
+
+  const toggleMobileSubmenu = (itemName: string) => {
+    setExpandedMobile(expandedMobile === itemName ? null : itemName);
   };
 
   const navigation = [
@@ -144,8 +149,10 @@ const Header: React.FC = () => {
 
   return (
     <>
-      {/* Top Contact Bar */}
-      <div className="bg-gray-900 text-white py-2 text-sm">
+      {/* Top Contact Bar - Hidden when scrolled */}
+      <div className={`bg-gray-900 text-white py-2 text-sm transition-all duration-300 ${
+        isScrolled ? 'h-0 overflow-hidden opacity-0' : 'h-auto opacity-100'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6">
@@ -153,11 +160,11 @@ const Header: React.FC = () => {
                 <Phone className="h-4 w-4" />
                 <span>+255 123 456 789</span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="hidden md:flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
                 <span>info@kilimanjarogates.com</span>
               </div>
-              <div className="hidden md:flex items-center space-x-2">
+              <div className="hidden lg:flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
                 <span>Arusha, Tanzania</span>
               </div>
@@ -183,7 +190,9 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className={`fixed w-full z-40 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-lg top-10' : 'bg-white/95 backdrop-blur-sm top-10'
+        isScrolled 
+          ? 'bg-white shadow-lg top-0' 
+          : 'bg-white/95 backdrop-blur-sm top-10'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -350,21 +359,39 @@ const Header: React.FC = () => {
               <div className="px-2 pt-2 pb-3 space-y-1 max-h-96 overflow-y-auto">
                 {navigation.map((item) => (
                   <div key={item.name}>
-                    <Link
-                      to={item.href}
-                      className={`block px-3 py-2 text-base font-medium ${
-                        location.pathname === item.href
-                          ? 'text-orange-600 bg-orange-50'
-                          : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
-                      }`}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
+                    <div className="flex items-center justify-between">
+                      <Link
+                        to={item.href}
+                        className={`flex-1 block px-3 py-2 text-base font-medium ${
+                          location.pathname === item.href
+                            ? 'text-orange-600 bg-orange-50'
+                            : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
+                        }`}
+                        onClick={() => {
+                          if (!item.megaMenu && !item.dropdown) {
+                            setIsMenuOpen(false);
+                          }
+                        }}
+                      >
+                        {item.name}
+                      </Link>
+                      
+                      {/* Mobile Submenu Toggle */}
+                      {(item.megaMenu || item.dropdown) && (
+                        <button
+                          onClick={() => toggleMobileSubmenu(item.name)}
+                          className="px-3 py-2 text-gray-500 hover:text-orange-600"
+                        >
+                          <ChevronRight className={`h-5 w-5 transition-transform ${
+                            expandedMobile === item.name ? 'rotate-90' : ''
+                          }`} />
+                        </button>
+                      )}
+                    </div>
                     
                     {/* Mobile Submenu */}
-                    {(item.megaMenu || item.dropdown) && (
-                      <div className="pl-4 space-y-1">
+                    {expandedMobile === item.name && (item.megaMenu || item.dropdown) && (
+                      <div className="pl-4 space-y-1 bg-gray-50">
                         {item.megaMenu && item.megaMenu.map((section, index) => (
                           <div key={index}>
                             <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wide">
