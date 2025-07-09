@@ -22,6 +22,18 @@ export const auth = {
         emailRedirectTo: `${window.location.origin}/profile`,
       },
     });
+    
+    // Log for debugging
+    if (error) {
+      console.error('SignUp error:', error);
+    } else {
+      console.log('SignUp success:', data);
+      // Check if user needs email confirmation
+      if (data.user && !data.user.email_confirmed_at) {
+        console.log('Email confirmation required for:', data.user.email);
+      }
+    }
+    
     return { data, error };
   },
 
@@ -30,6 +42,12 @@ export const auth = {
       email,
       password,
     });
+    
+    // Log for debugging
+    if (error) {
+      console.error('SignIn error:', error);
+    }
+    
     return { data, error };
   },
 
@@ -46,6 +64,18 @@ export const auth = {
   getUser: async () => {
     const { data: { user } } = await supabase.auth.getUser();
     return user;
+  },
+
+  // Add method to resend confirmation email
+  resendConfirmation: async (email: string) => {
+    const { data, error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/profile`,
+      }
+    });
+    return { data, error };
   },
 };
 
