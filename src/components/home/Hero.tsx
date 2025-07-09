@@ -1,6 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Play, ChevronLeft, ChevronRight, Search, Calendar, MapPin } from 'lucide-react';
+import { db } from '../../lib/supabase';
+import { TourPackage } from '../../types';
 
 interface HeroSlide {
   id: number;
@@ -20,6 +22,14 @@ const Hero: React.FC = () => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [isTransitioning, setIsTransitioning] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [searchForm, setSearchForm] = React.useState({
+    keyword: '',
+    destination: '',
+    departureDate: ''
+  });
+  const [destinations, setDestinations] = React.useState<{ value: string; label: string }[]>([]);
+  const [isSearching, setIsSearching] = React.useState(false);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +38,36 @@ const Hero: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  React.useEffect(() => {
+    const fetchDestinations = async () => {
+      try {
+        const { data, error } = await db.getTourPackages();
+        if (error) throw error;
+        
+        // Extract unique destinations/categories
+        const uniqueDestinations = Array.from(new Set(data?.map(tour => tour.category) || []))
+          .map(category => ({
+            value: category,
+            label: category === 'mountain-climbing' ? 'Mount Kilimanjaro' :
+                   category === 'safari' ? 'Safari Parks' :
+                   category === 'day-trips' ? 'Day Trips' : category
+          }));
+        
+        setDestinations(uniqueDestinations);
+      } catch (error) {
+        console.error('Error fetching destinations:', error);
+        // Fallback destinations
+        setDestinations([
+          { value: 'mountain-climbing', label: 'Mount Kilimanjaro' },
+          { value: 'safari', label: 'Safari Parks' },
+          { value: 'day-trips', label: 'Day Trips' }
+        ]);
+      }
+    };
+
+    fetchDestinations();
   }, []);
 
   const slides: HeroSlide[] = [
@@ -119,6 +159,47 @@ const Hero: React.FC = () => {
 
     return () => clearInterval(timer);
   }, []);
+
+  const handleSearchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSearching(true);
+
+    try {
+      // Build search parameters
+      const searchParams = new URLSearchParams();
+      
+      if (searchForm.keyword) {
+        searchParams.set('search', searchForm.keyword);
+      }
+      
+      if (searchForm.destination) {
+        searchParams.set('category', searchForm.destination);
+      }
+      
+      if (searchForm.departureDate) {
+        searchParams.set('date', searchForm.departureDate);
+      }
+
+      // Navigate to tours page with search parameters
+      const searchQuery = searchParams.toString();
+      if (searchForm.destination) {
+        navigate(`/tours/${searchForm.destination}${searchQuery ? `?${searchQuery}` : ''}`);
+      } else {
+        navigate(`/tours${searchQuery ? `?${searchQuery}` : ''}`);
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setSearchForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   const currentSlideData = slides[currentSlide];
 
@@ -243,28 +324,37 @@ const Hero: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
             <div className="flex items-center mb-6">
               <h2 className="text-2xl md:text-3xl font-bold text-orange-600 mr-4">Find Your Tour</h2>
+              <div className="text-sm text-gray-500">
+                Search from {destinations.length} destinations
+              </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Keyword Search */}
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Keyword"
+                  value={searchForm.keyword}
+                  onChange={(e) => handleInputChange('keyword', e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
                 />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Destination Select */}
               <div className="relative">
-                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none appearance-none bg-white">
+                <select 
+                  value={searchForm.destination}
+                  onChange={(e) => handleInputChange('destination', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none appearance-none bg-white"
+                >
                   <option value="">Select your Destination</option>
-                  <option value="kilimanjaro">Mount Kilimanjaro</option>
-                  <option value="serengeti">Serengeti National Park</option>
-                  <option value="ngorongoro">Ngorongoro Crater</option>
-                  <option value="zanzibar">Zanzibar</option>
-                  <option value="tarangire">Tarangire National Park</option>
-                  <option value="manyara">Lake Manyara</option>
+                  {destinations.map((dest) => (
+                    <option key={dest.value} value={dest.value}>
+                      {dest.label}
+                    </option>
+                  ))}
                 </select>
                 <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
@@ -273,16 +363,62 @@ const Hero: React.FC = () => {
               <div className="relative">
                 <input
                   type="date"
-                  placeholder="Departure Date"
+                  value={searchForm.departureDate}
+                  onChange={(e) => handleInputChange('departureDate', e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
                 />
+                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Search Button */}
-              <button className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2 font-semibold">
+              <button 
+                type="submit"
+                disabled={isSearching}
+                className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <Search className="h-5 w-5" />
-                <span>Search Tours</span>
+                <span>{isSearching ? 'Searching...' : 'Search Tours'}</span>
               </button>
+            </form>
+            
+            {/* Quick Search Suggestions */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="text-sm text-gray-600 mb-3">Popular searches:</div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => {
+                    setSearchForm({ keyword: 'Kilimanjaro', destination: 'mountain-climbing', departureDate: '' });
+                  }}
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-orange-100 hover:text-orange-700 transition-colors"
+                >
+                  Kilimanjaro Climbing
+                </button>
+                <button
+                  onClick={() => {
+                    setSearchForm({ keyword: 'Safari', destination: 'safari', departureDate: '' });
+                  }}
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-orange-100 hover:text-orange-700 transition-colors"
+                >
+                  Serengeti Safari
+                </button>
+                <button
+                  onClick={() => {
+                    setSearchForm({ keyword: 'Day trip', destination: 'day-trips', departureDate: '' });
+                  }}
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-orange-100 hover:text-orange-700 transition-colors"
+                >
+                  Day Trips
+                </button>
+                <button
+                  onClick={() => {
+                    setSearchForm({ keyword: 'Ngorongoro', destination: '', departureDate: '' });
+                  }}
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-orange-100 hover:text-orange-700 transition-colors"
+                >
+                  Ngorongoro Crater
+                </button>
+              </div>
             </div>
           </div>
         </div>

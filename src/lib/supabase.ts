@@ -122,6 +122,60 @@ export const db = {
     return { data, error };
   },
 
+  searchTours: async (searchTerm?: string, category?: string, difficulty?: string, minPrice?: number, maxPrice?: number, minDuration?: number, maxDuration?: number) => {
+    let query = supabase
+      .from('tour_packages')
+      .select('*')
+      .eq('active', true);
+
+    if (searchTerm) {
+      query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,short_description.ilike.%${searchTerm}%`);
+    }
+
+    if (category) {
+      query = query.eq('category', category);
+    }
+
+    if (difficulty) {
+      query = query.eq('difficulty', difficulty);
+    }
+
+    if (minPrice !== undefined) {
+      query = query.gte('price_usd', minPrice);
+    }
+
+    if (maxPrice !== undefined) {
+      query = query.lte('price_usd', maxPrice);
+    }
+
+    if (minDuration !== undefined) {
+      query = query.gte('duration', minDuration);
+    }
+
+    if (maxDuration !== undefined) {
+      query = query.lte('duration', maxDuration);
+    }
+
+    query = query.order('featured', { ascending: false }).order('created_at', { ascending: false });
+
+    const { data, error } = await query;
+    return { data, error };
+  },
+
+  getTourCategories: async () => {
+    const { data, error } = await supabase
+      .from('tour_packages')
+      .select('category')
+      .eq('active', true);
+    
+    if (error || !data) {
+      return { data: [], error };
+    }
+    
+    const uniqueCategories = Array.from(new Set(data.map(item => item.category)));
+    return { data: uniqueCategories, error: null };
+  },
+
   // Bookings
   createBooking: async (booking: Partial<Booking>) => {
     const { data, error } = await supabase

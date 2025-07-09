@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, MapPin, Clock, Users, Star } from 'lucide-react';
 import TourCard from '../components/common/TourCard';
 import { TourPackage } from '../types';
@@ -7,6 +7,7 @@ import { db } from '../lib/supabase';
 
 const Tours: React.FC = () => {
   const { category } = useParams();
+  const [searchParams] = useSearchParams();
   const [tours, setTours] = useState<TourPackage[]>([]);
   const [filteredTours, setFilteredTours] = useState<TourPackage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +15,22 @@ const Tours: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [selectedDuration, setSelectedDuration] = useState('');
   const [priceRange, setPriceRange] = useState('');
+
+  // Initialize search from URL parameters
+  useEffect(() => {
+    const urlSearch = searchParams.get('search');
+    const urlDate = searchParams.get('date');
+    
+    if (urlSearch) {
+      setSearchTerm(urlSearch);
+    }
+    
+    // You can add date filtering logic here if needed
+    // For now, we'll just log it
+    if (urlDate) {
+      console.log('Search date:', urlDate);
+    }
+  }, [searchParams]);
 
   const categories = {
     'mountain-climbing': 'Mountain Climbing',
