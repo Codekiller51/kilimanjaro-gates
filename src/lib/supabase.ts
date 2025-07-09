@@ -70,7 +70,7 @@ export const db = {
       .from('tour_packages')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     return { data, error };
   },
 
