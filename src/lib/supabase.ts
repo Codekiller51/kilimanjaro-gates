@@ -150,21 +150,6 @@ export const db = {
   },
 
   // Reviews
-    }
-    if (filters.minDuration) {
-      query = query.gte('duration', filters.minDuration);
-    }
-    if (filters.maxDuration) {
-          category,
-          price_usd,
-          difficulty
-    }
-    if (filters.minPrice) {
-      query = query.gte('price_usd', filters.minPrice);
-    }
-    if (filters.maxPrice) {
-      query = query.lte('price_usd', filters.maxPrice);
-    }
   getBooking: async (id: string) => {
     const { data, error } = await supabase
       .from('bookings')
@@ -184,9 +169,6 @@ export const db = {
     return { data, error };
   },
 
-    const { data, error } = await query.order('created_at', { ascending: false });
-    return { data, error };
-  },
   getTourReviews: async (tourId: string) => {
     const { data, error } = await supabase
       .from('reviews')
@@ -196,11 +178,13 @@ export const db = {
           full_name,
           avatar_url
         )
-      .eq('verified', true)
       `)
+      .eq('verified', true)
       .eq('tour_id', tourId)
       .order('created_at', { ascending: false });
     return { data, error };
+  },
+
   createReview: async (review: Partial<Review>) => {
     const { data, error } = await supabase
       .from('reviews')
@@ -251,17 +235,17 @@ export const db = {
     
     return { averageRating, totalReviews, error: null };
   },
-  },
 
   // Blog posts
   getBlogPosts: async () => {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
-      .order('published_at', { ascending: false });
+      .order('published_at', { ascending: false })
       .order('created_at', { ascending: false });
     return { data, error };
   },
+
   getBlogPost: async (slug: string) => {
     const { data, error } = await supabase
       .from('blog_posts')
@@ -331,7 +315,7 @@ export const db = {
       .single();
     return { data, error };
   },
-};
+
   updateBooking: async (id: string, updates: Partial<Booking>) => {
     const { data, error } = await supabase
       .from('bookings')
@@ -340,4 +324,5 @@ export const db = {
       .select()
       .single();
     return { data, error };
-  },
+  }
+};
