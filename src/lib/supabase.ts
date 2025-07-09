@@ -462,6 +462,41 @@ export const db = {
     return { data, error };
   },
 
+  // Avatar upload (placeholder for future Supabase Storage integration)
+  uploadAvatar: async (userId: string, file: File) => {
+    // This is a placeholder function for avatar upload
+    // In a real implementation, you would use Supabase Storage:
+    /*
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${userId}.${fileExt}`;
+    const filePath = `avatars/${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true });
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    return { data: { url: publicUrl }, error: null };
+    */
+    
+    // For now, return a placeholder
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ 
+          data: { url: `https://api.dicebear.com/7.x/initials/svg?seed=${userId}` }, 
+          error: null 
+        });
+      }, 1000);
+    });
+  },
+
   updateBooking: async (id: string, updates: Partial<Booking>) => {
     const { data, error } = await supabase
       .from('bookings')

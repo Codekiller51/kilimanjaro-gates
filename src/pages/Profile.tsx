@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Calendar, MapPin, Phone, Mail, Edit, Save, X } from 'lucide-react';
+import { User, Calendar, MapPin, Phone, Mail, Edit, Save, X, Camera, Upload } from 'lucide-react';
 import { auth, db } from '../lib/supabase';
 import { Booking } from '../types';
 
@@ -13,9 +13,13 @@ const Profile: React.FC = () => {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
+    avatar_url: '',
     phone: '',
     nationality: '',
   });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -47,6 +51,7 @@ const Profile: React.FC = () => {
           setProfile(basicProfile);
           setFormData({
             full_name: basicProfile.full_name,
+            avatar_url: basicProfile.avatar_url || '',
             phone: basicProfile.phone || '',
             nationality: basicProfile.nationality || '',
           });
@@ -57,6 +62,7 @@ const Profile: React.FC = () => {
           });
           setFormData({
             full_name: profileData.full_name,
+            avatar_url: profileData.avatar_url || '',
             phone: profileData.phone || '',
             nationality: profileData.nationality || '',
           });
@@ -82,12 +88,95 @@ const Profile: React.FC = () => {
     checkUser();
   }, [navigate]);
 
+  const getDefaultAvatar = (name: string) => {
+    // Generate a default avatar based on initials
+    const initials = name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+    
+    // Generate a consistent color based on the name
+    const colors = [
+      'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 
+      'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-teal-500'
+    ];
+    const colorIndex = name.length % colors.length;
+    
+    return { initials, colorClass: colors[colorIndex] };
+  };
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+      
+      setAvatarFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadAvatar = async () => {
+    if (!avatarFile || !user) return null;
+    
+    setUploadingAvatar(true);
+    
+    try {
+      // In a real app, you would upload to Supabase Storage or another service
+      // For now, we'll simulate the upload and use a placeholder
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simulate successful upload - in real app, this would be the actual uploaded URL
+      const uploadedUrl = avatarPreview;
+      
+      return uploadedUrl;
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      throw error;
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!user || !profile) return;
 
     try {
+      let avatarUrl = formData.avatar_url;
+      
+      // Upload new avatar if selected
+      if (avatarFile) {
+        try {
+          const uploadedUrl = await uploadAvatar();
+          if (uploadedUrl) {
+            avatarUrl = uploadedUrl;
+          }
+        } catch (error) {
+          alert('Failed to upload avatar. Please try again.');
+          return;
+        }
+      }
+      
       const { data, error } = await db.updateProfile(user.id, {
         full_name: formData.full_name,
+        avatar_url: avatarUrl,
         phone: formData.phone,
         nationality: formData.nationality,
         updated_at: new Date().toISOString(),
@@ -97,8 +186,15 @@ const Profile: React.FC = () => {
         console.error('Error updating profile:', error);
         // Show error message to user
       } else {
-        setProfile({ ...profile, ...formData, updated_at: new Date().toISOString() });
+        setProfile({ 
+          ...profile, 
+          ...formData, 
+          avatar_url: avatarUrl,
+          updated_at: new Date().toISOString() 
+        });
         setEditing(false);
+        setAvatarFile(null);
+        setAvatarPreview('');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -108,9 +204,12 @@ const Profile: React.FC = () => {
   const handleCancel = () => {
     setFormData({
       full_name: profile.full_name,
+      avatar_url: profile.avatar_url || '',
       phone: profile.phone || '',
       nationality: profile.nationality || '',
     });
+    setAvatarFile(null);
+    setAvatarPreview('');
     setEditing(false);
   };
 
@@ -185,11 +284,31 @@ const Profile: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-lg p-8">
               <div className="text-center mb-6">
-                <img
-                  src={profile.avatar_url}
-                  alt={profile.full_name}
-                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                />
+                <div className="relative inline-block mb-4">
+                  {(avatarPreview || profile.avatar_url) ? (
+                    <img
+                      src={avatarPreview || profile.avatar_url}
+                      alt={profile.full_name}
+                      className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
+                    />
+                  ) : (
+                    <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white text-2xl font-bold border-4 border-gray-200 ${getDefaultAvatar(profile.full_name).colorClass}`}>
+                      {getDefaultAvatar(profile.full_name).initials}
+                    </div>
+                  )}
+                  
+                  {editing && (
+                    <label className="absolute bottom-0 right-0 bg-orange-600 hover:bg-orange-700 text-white rounded-full p-2 cursor-pointer transition-colors">
+                      <Camera className="h-4 w-4" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
                 <h1 className="text-2xl font-bold text-gray-900">{profile.full_name}</h1>
                 <p className="text-gray-600">{profile.email}</p>
               </div>
@@ -197,6 +316,14 @@ const Profile: React.FC = () => {
               <div className="space-y-4">
                 {editing ? (
                   <>
+                    {avatarFile && (
+                      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="flex items-center space-x-2 text-blue-700 text-sm">
+                          <Upload className="h-4 w-4" />
+                          <span>New avatar selected: {avatarFile.name}</span>
+                        </div>
+                      </div>
+                    )}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Full Name
@@ -233,13 +360,24 @@ const Profile: React.FC = () => {
                     <div className="flex space-x-2">
                       <button
                         onClick={handleSave}
+                        disabled={uploadingAvatar}
                         className="flex-1 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2"
                       >
-                        <Save className="h-4 w-4" />
-                        <span>Save</span>
+                        {uploadingAvatar ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>Saving...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Save className="h-4 w-4" />
+                            <span>Save</span>
+                          </>
+                        )}
                       </button>
                       <button
                         onClick={handleCancel}
+                        disabled={uploadingAvatar}
                         className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors flex items-center justify-center space-x-2"
                       >
                         <X className="h-4 w-4" />
@@ -249,6 +387,15 @@ const Profile: React.FC = () => {
                   </>
                 ) : (
                   <>
+                    <div className="mb-4">
+                      <button
+                        onClick={() => setEditing(true)}
+                        className="text-orange-600 hover:text-orange-700 text-sm flex items-center space-x-1"
+                      >
+                        <Camera className="h-4 w-4" />
+                        <span>Change Photo</span>
+                      </button>
+                    </div>
                     <div className="flex items-center space-x-3">
                       <Phone className="h-5 w-5 text-gray-400" />
                       <span className="text-gray-600">{profile.phone || 'Not provided'}</span>
