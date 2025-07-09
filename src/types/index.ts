@@ -70,14 +70,22 @@ export interface Review {
   id: string;
   user_id: string;
   tour_id: string;
+  booking_id?: string;
   rating: number;
   title: string;
   content: string;
   images?: string[];
+  verified: boolean;
   created_at: string;
-  user?: {
+  updated_at: string;
+  profiles?: {
     full_name: string;
     avatar_url?: string;
+    nationality?: string;
+  };
+  tour_packages?: {
+    title: string;
+    category: string;
   };
 }
 

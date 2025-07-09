@@ -323,9 +323,19 @@ export const db = {
   },
 
   createReview: async (review: Partial<Review>) => {
+    const user = await auth.getUser();
+    if (!user) {
+      return { data: null, error: { message: 'User not authenticated' } };
+    }
+
+    const reviewData = {
+      ...review,
+      user_id: user.id,
+    };
+
     const { data, error } = await supabase
       .from('reviews')
-      .insert(review)
+      .insert(reviewData)
       .select()
       .single();
     return { data, error };

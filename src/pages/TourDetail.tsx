@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Users, Star, MapPin, Check, X, ArrowLeft } from 'lucide-react';
 import { TourPackage, Review } from '../types';
 import { db, auth } from '../lib/supabase';
+import ReviewsList from '../components/reviews/ReviewsList';
 
 const TourDetail: React.FC = () => {
   const { category, id } = useParams();
@@ -299,33 +300,7 @@ const TourDetail: React.FC = () => {
             {/* Reviews */}
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h3>
-              {reviews.length > 0 ? (
-                <div className="space-y-6">
-                  {reviews.map((review) => (
-                    <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                      <div className="flex items-center space-x-4 mb-3">
-                        <img
-                          src={review.user?.avatar_url || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150'}
-                          alt={review.user?.full_name}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                        <div>
-                          <div className="font-semibold text-gray-900">{review.user?.full_name}</div>
-                          <div className="flex items-center space-x-1">
-                            {[...Array(review.rating)].map((_, i) => (
-                              <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-2">{review.title}</h4>
-                      <p className="text-gray-600">{review.content}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No reviews yet. Be the first to review this tour!</p>
-              )}
+              <ReviewsList tourId={tour.id} showTourInfo={false} />
             </div>
           </div>
 

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Calendar, MapPin, Phone, Mail, Edit, Save, X, Camera, Upload } from 'lucide-react';
+import { User, Calendar, MapPin, Phone, Mail, Edit, Save, X, Camera, Upload, Star } from 'lucide-react';
 import { auth, db } from '../lib/supabase';
 import { Booking } from '../types';
+import ReviewForm from '../components/reviews/ReviewForm';
+import ReviewsList from '../components/reviews/ReviewsList';
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -20,6 +22,9 @@ const Profile: React.FC = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'bookings' | 'reviews'>('bookings');
+  const [userReviews, setUserReviews] = useState([]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -76,6 +81,16 @@ const Profile: React.FC = () => {
           setBookings([]);
         } else {
           setBookings(bookingsData || []);
+        }
+
+        // Fetch user reviews
+        const { data: reviewsData, error: reviewsError } = await db.getUserReviews(currentUser.id);
+        
+        if (reviewsError) {
+          console.error('Error fetching reviews:', reviewsError);
+          setUserReviews([]);
+        } else {
+          setUserReviews(reviewsData || []);
         }
       } catch (error) {
         console.error('Error loading profile data:', error);
@@ -211,6 +226,20 @@ const Profile: React.FC = () => {
     setAvatarFile(null);
     setAvatarPreview('');
     setEditing(false);
+  };
+
+  const handleReviewSuccess = () => {
+    setShowReviewForm(null);
+    // Refresh reviews
+    if (user) {
+      db.getUserReviews(user.id).then(({ data }) => {
+        setUserReviews(data || []);
+      });
+    }
+  };
+
+  const getBookingForReview = (bookingId: string) => {
+    return bookings.find(booking => booking.id === bookingId);
   };
 
   const getStatusColor = (status: string) => {
@@ -426,9 +455,35 @@ const Profile: React.FC = () => {
           {/* Bookings */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">My Bookings</h2>
+              {/* Tab Navigation */}
+              <div className="flex space-x-8 mb-6 border-b border-gray-200">
+                <button
+                  onClick={() => setActiveTab('bookings')}
+                  className={`pb-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'bookings'
+                      ? 'border-orange-500 text-orange-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  My Bookings ({bookings.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab('reviews')}
+                  className={`pb-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'reviews'
+                      ? 'border-orange-500 text-orange-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  My Reviews ({userReviews.length})
+                </button>
+              </div>
               
-              {bookings.length > 0 ? (
+              {/* Bookings Tab */}
+              {activeTab === 'bookings' && (
+                <>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">My Bookings</h2>
+                  {bookings.length > 0 ? (
                 <div className="space-y-6">
                   {bookings.map((booking) => (
                     <div key={booking.id} className="border border-gray-200 rounded-lg p-6">
@@ -477,7 +532,10 @@ const Profile: React.FC = () => {
                           </button>
                         )}
                         {booking.status === 'completed' && (
-                          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm">
+                          <button 
+                            onClick={() => setShowReviewForm(booking.id)}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
+                          >
                             Write Review
                           </button>
                         )}
@@ -500,9 +558,46 @@ const Profile: React.FC = () => {
                   </button>
                 </div>
               )}
+                </>
+              )}
+
+              {/* Reviews Tab */}
+              {activeTab === 'reviews' && (
+                <>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">My Reviews</h2>
+                  {userReviews.length > 0 ? (
+                    <ReviewsList tourId={undefined} showTourInfo={true} />
+                  ) : (
+                    <div className="text-center py-12">
+                      <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No reviews yet</h3>
+                      <p className="text-gray-600 mb-6">
+                        Complete a tour to share your experience and help other travelers!
+                      </p>
+                      <button
+                        onClick={() => setActiveTab('bookings')}
+                        className="bg-orange-600 text-white px-6 py-3 rounded-md hover:bg-orange-700 transition-colors"
+                      >
+                        View My Bookings
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Review Form Modal */}
+        {showReviewForm && (
+          <ReviewForm
+            bookingId={showReviewForm}
+            tourId={getBookingForReview(showReviewForm)?.tour_id || ''}
+            tourTitle={getBookingForReview(showReviewForm)?.tour_packages?.title || 'Tour'}
+            onSuccess={handleReviewSuccess}
+            onCancel={() => setShowReviewForm(null)}
+          />
+        )}
       </div>
     </div>
   );
