@@ -28,7 +28,9 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      const { data } = await supabase.auth.getUser();
+      const currentUser = data.user;
+      
       if (!currentUser) {
         navigate('/login');
         return;
