@@ -517,6 +517,58 @@ export const db = {
     return { data, error };
   },
 
+  // Payment operations
+  createPayment: async (payment: Partial<PaymentDetails>) => {
+    const { data, error } = await supabase
+      .from('payments')
+      .insert(payment)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  getPaymentsByBooking: async (bookingId: string) => {
+    const { data, error } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('booking_id', bookingId)
+      .order('created_at', { ascending: false });
+    return { data, error };
+  },
+
+  // Customer Survey operations
+  createCustomerSurvey: async (survey: Partial<CustomerSurvey>) => {
+    const { data, error } = await supabase
+      .from('customer_surveys')
+      .insert(survey)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  getSurveyByBooking: async (bookingId: string) => {
+    const { data, error } = await supabase
+      .from('customer_surveys')
+      .select('*')
+      .eq('booking_id', bookingId)
+      .single();
+    return { data, error };
+  },
+
+  updateSurveyResponse: async (surveyId: string, response: string) => {
+    const { data, error } = await supabase
+      .from('customer_surveys')
+      .update({
+        response_from_company: response,
+        response_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', surveyId)
+      .select()
+      .single();
+    return { data, error };
+  },
+
   // Destinations
   getDestinations: async (category?: string, featured?: boolean) => {
     let query = supabase

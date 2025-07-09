@@ -4,6 +4,7 @@ import { Calendar, Clock, Users, Star, MapPin, Check, X, ArrowLeft } from 'lucid
 import { TourPackage, Review } from '../types';
 import { db, auth } from '../lib/supabase';
 import ReviewsList from '../components/reviews/ReviewsList';
+import BookingForm from '../components/booking/BookingForm';
 
 const TourDetail: React.FC = () => {
   const { category, id } = useParams();
@@ -14,6 +15,7 @@ const TourDetail: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
 
   useEffect(() => {
     const fetchTour = async () => {
@@ -70,6 +72,15 @@ const TourDetail: React.FC = () => {
     } else {
       navigate('/login');
     }
+  };
+
+  const handleBookingSuccess = () => {
+    setShowBookingForm(false);
+    setBookingSuccess(true);
+    // Redirect to success page or show success message
+    setTimeout(() => {
+      navigate('/profile');
+    }, 3000);
   };
 
   if (loading) {
@@ -347,6 +358,33 @@ const TourDetail: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Booking Form Modal */}
+        {showBookingForm && tour && (
+          <BookingForm
+            tour={tour}
+            onClose={() => setShowBookingForm(false)}
+            onSuccess={handleBookingSuccess}
+          />
+        )}
+
+        {/* Success Message */}
+        {bookingSuccess && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+              <div className="text-center">
+                <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Booking Confirmed!</h2>
+                <p className="text-gray-600 mb-6">
+                  Your booking has been successfully confirmed. You will receive a confirmation email shortly.
+                </p>
+                <p className="text-sm text-gray-500">
+                  Redirecting to your profile...
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
