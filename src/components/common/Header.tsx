@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Mountain, User, LogOut, ChevronDown, Phone, Mail, MapPin, Facebook, Instagram, Twitter, ChevronRight } from 'lucide-react';
-import { auth } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,14 +21,14 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const currentUser = await auth.getUser();
-      setUser(currentUser);
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
     };
     getUser();
   }, []);
 
   const handleSignOut = async () => {
-    await auth.signOut();
+    await supabase.auth.signOut();
     setUser(null);
   };
 

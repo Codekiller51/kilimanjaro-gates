@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { auth } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -32,7 +32,10 @@ const LoginForm: React.FC = () => {
     setError(null);
 
     try {
-      const { error } = await auth.signIn(data.email, data.password);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
       
       if (error) {
         setError(error.message);

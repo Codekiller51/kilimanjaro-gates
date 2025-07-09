@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Mail, Lock, Shield } from 'lucide-react';
-import { auth, admin } from '../../lib/supabase';
+import { supabase, admin } from '../../lib/supabase';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -29,7 +29,7 @@ const AdminLogin: React.FC = () => {
 
   useEffect(() => {
     const checkAdminStatus = async () => {
-      const isAdmin = await admin.checkAdminStatus();
+      const isAdmin = await admin?.checkAdminStatus();
       if (isAdmin) {
         navigate('/admin/dashboard');
       }
@@ -43,7 +43,10 @@ const AdminLogin: React.FC = () => {
     setError(null);
 
     try {
-      const { error: signInError } = await auth.signIn(data.email, data.password);
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
       
       if (signInError) {
         setError(signInError.message);
@@ -52,10 +55,10 @@ const AdminLogin: React.FC = () => {
       }
       
       // Check if user is admin
-      const isAdmin = await admin.checkAdminStatus();
+      const isAdmin = await admin?.checkAdminStatus();
       
       if (!isAdmin) {
-        await auth.signOut();
+        await supabase.auth.signOut();
         setError('You do not have administrator privileges');
         setIsLoading(false);
         return;

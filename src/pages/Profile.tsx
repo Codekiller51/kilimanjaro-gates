@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Calendar, MapPin, Phone, Mail, Edit, Save, X, Camera, Upload, Star } from 'lucide-react';
-import { auth, db } from '../lib/supabase';
+import { supabase, db } from '../lib/supabase';
 import { Booking } from '../types';
 import ReviewForm from '../components/reviews/ReviewForm';
 import ReviewsList from '../components/reviews/ReviewsList';
@@ -28,7 +28,7 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const checkUser = async () => {
-      const currentUser = await auth.getUser();
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
       if (!currentUser) {
         navigate('/login');
         return;

@@ -17,7 +17,7 @@ import {
   ChevronDown,
   Shield
 } from 'lucide-react';
-import { auth, db } from '../../lib/supabase';
+import { supabase, db } from '../../lib/supabase';
 
 const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -29,7 +29,7 @@ const AdminLayout: React.FC = () => {
   useEffect(() => {
     const checkAdmin = async () => {
       setIsLoading(true);
-      const user = await auth.getUser();
+      const user = await supabase.auth.getUser();
       
       if (!user) {
         navigate('/admin/login');
@@ -49,7 +49,7 @@ const AdminLayout: React.FC = () => {
   }, [navigate]);
 
   const handleSignOut = async () => {
-    await auth.signOut();
+    await supabase.auth.signOut();
     navigate('/admin/login');
   };
 

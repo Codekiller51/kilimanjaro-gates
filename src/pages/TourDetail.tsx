@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Users, Star, MapPin, Check, X, ArrowLeft } from 'lucide-react';
 import { TourPackage, Review } from '../types';
-import { db, auth } from '../lib/supabase';
+import { db, supabase } from '../lib/supabase';
 import ReviewsList from '../components/reviews/ReviewsList';
 import BookingForm from '../components/booking/BookingForm';
 
@@ -58,7 +58,7 @@ const TourDetail: React.FC = () => {
     };
 
     const getUser = async () => {
-      const currentUser = await auth.getUser();
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
       setUser(currentUser);
     };
 

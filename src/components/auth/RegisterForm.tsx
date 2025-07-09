@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
-import { auth } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 const registerSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -38,7 +38,15 @@ const RegisterForm: React.FC = () => {
     setError(null);
 
     try {
-      const { error } = await auth.signUp(data.email, data.password, data.fullName);
+      const { error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.fullName,
+          },
+        },
+      });
       
       if (error) {
         setError(error.message);
