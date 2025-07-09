@@ -1,36 +1,68 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
+import { db } from '../../lib/supabase';
+
+interface ReviewWithDetails {
+  id: string;
+  rating: number;
+  title: string;
+  content: string;
+  created_at: string;
+  profiles?: {
+    full_name: string;
+    avatar_url?: string;
+    nationality?: string;
+  };
+  tour_packages?: {
+    title: string;
+    category: string;
+  };
+}
 
 const Testimonials: React.FC = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      country: 'United States',
-      rating: 5,
-      text: 'Absolutely incredible experience! The guides were knowledgeable and the views were breathtaking. Kilimanjaro Gates made our dream climb a reality.',
-      tour: 'Kilimanjaro Machame Route',
-      avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150',
-    },
-    {
-      id: 2,
-      name: 'Michael Chen',
-      country: 'Canada',
-      rating: 5,
-      text: 'The safari was beyond our expectations. We saw all the Big Five and the accommodation was excellent. Highly recommend!',
-      tour: 'Serengeti Safari Adventure',
-      avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150',
-    },
-    {
-      id: 3,
-      name: 'Emma Wilson',
-      country: 'United Kingdom',
-      rating: 5,
-      text: 'Professional, safe, and unforgettable. The team at Kilimanjaro Gates knows how to create magical experiences.',
-      tour: 'Ngorongoro Crater Day Trip',
-      avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150',
-    },
-  ];
+  const [testimonials, setTestimonials] = React.useState<ReviewWithDetails[]>([]);
+  const [stats, setStats] = React.useState({
+    averageRating: 4.9,
+    totalReviews: 2000,
+    recommendationRate: 98
+  });
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        // Fetch featured reviews for testimonials
+        const { data: reviews, error: reviewsError } = await db.getFeaturedReviews(3);
+        if (reviewsError) throw reviewsError;
+        setTestimonials(reviews || []);
+
+        // Fetch review stats
+        const { averageRating, totalReviews, recommendationRate, error: statsError } = await db.getReviewStats();
+        if (statsError) throw statsError;
+        setStats({ averageRating, totalReviews, recommendationRate });
+
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+        // Keep default values if fetch fails
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-pulse">Loading testimonials...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 bg-gray-50">
@@ -56,19 +88,19 @@ const Testimonials: React.FC = () => {
               </div>
               
               <p className="text-gray-600 mb-6 italic">
-                "{testimonial.text}"
+                "{testimonial.content.length > 150 ? testimonial.content.substring(0, 150) + '...' : testimonial.content}"
               </p>
               
               <div className="flex items-center space-x-4">
                 <img 
-                  src={testimonial.avatar} 
-                  alt={testimonial.name}
+                  src={testimonial.profiles?.avatar_url || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150'} 
+                  alt={testimonial.profiles?.full_name}
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div>
-                  <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                  <div className="text-sm text-gray-500">{testimonial.country}</div>
-                  <div className="text-sm text-orange-600">{testimonial.tour}</div>
+                  <div className="font-semibold text-gray-900">{testimonial.profiles?.full_name}</div>
+                  <div className="text-sm text-gray-500">{testimonial.profiles?.nationality || 'Traveler'}</div>
+                  <div className="text-sm text-orange-600">{testimonial.tour_packages?.title}</div>
                 </div>
               </div>
             </div>
@@ -79,15 +111,15 @@ const Testimonials: React.FC = () => {
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-2">4.9/5</div>
+                <div className="text-3xl font-bold text-orange-600 mb-2">{stats.averageRating}/5</div>
                 <div className="text-gray-600">Average Rating</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-2">2000+</div>
+                <div className="text-3xl font-bold text-orange-600 mb-2">{stats.totalReviews}+</div>
                 <div className="text-gray-600">Happy Customers</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-2">98%</div>
+                <div className="text-3xl font-bold text-orange-600 mb-2">{stats.recommendationRate}%</div>
                 <div className="text-gray-600">Would Recommend</div>
               </div>
             </div>

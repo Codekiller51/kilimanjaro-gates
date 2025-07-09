@@ -239,6 +239,89 @@ export const db = {
     return { data, error };
   },
 
+  getAllReviews: async (category?: string, searchTerm?: string, limit?: number) => {
+    let query = supabase
+      .from('reviews')
+      .select(`
+        *,
+        profiles (
+          full_name,
+          avatar_url,
+          nationality
+        ),
+        tour_packages (
+          title,
+          category
+        )
+      `)
+      .eq('verified', true)
+      .order('created_at', { ascending: false });
+
+    if (category && category !== 'all') {
+      query = query.eq('tour_packages.category', category);
+    }
+
+    if (searchTerm) {
+      query = query.or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`);
+    }
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    const { data, error } = await query;
+    return { data, error };
+  },
+
+  getFeaturedReviews: async (limit: number = 3) => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(`
+        *,
+        profiles (
+          full_name,
+          avatar_url,
+          nationality
+        ),
+        tour_packages (
+          title,
+          category
+        )
+      `)
+      .eq('verified', true)
+      .eq('rating', 5)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    return { data, error };
+  },
+
+  getReviewStats: async () => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('rating')
+      .eq('verified', true);
+    
+    if (error || !data || data.length === 0) {
+      return { 
+        averageRating: 0, 
+        totalReviews: 0, 
+        recommendationRate: 0,
+        error 
+      };
+    }
+    
+    const totalReviews = data.length;
+    const averageRating = data.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
+    const recommendationRate = (data.filter(review => review.rating >= 4).length / totalReviews) * 100;
+    
+    return { 
+      averageRating: Math.round(averageRating * 10) / 10, 
+      totalReviews, 
+      recommendationRate: Math.round(recommendationRate),
+      error: null 
+    };
+  },
+
   createReview: async (review: Partial<Review>) => {
     const { data, error } = await supabase
       .from('reviews')
