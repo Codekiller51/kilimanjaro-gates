@@ -21,7 +21,7 @@ const TourDetail: React.FC = () => {
     const fetchTour = async () => {
       try {
         if (tourSlug) {
-          const { data, error } = await db.getTourPackageBySlug(tourSlug);
+          const { data, error } = await db.getTourPackage(tourSlug);
           
           if (error) {
             console.error('Error fetching tour:', error);
