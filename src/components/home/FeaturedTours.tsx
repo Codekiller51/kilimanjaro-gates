@@ -12,13 +12,15 @@ const FeaturedTours: React.FC = () => {
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const { data, error } = await db.getFeaturedTours();
+        const { data, error } = await db.getTourPackages();
         
         if (error) {
           console.error('Error fetching featured tours:', error);
           setTours([]);
         } else {
-          setTours(data || []);
+          // Filter for featured tours or take first 6 tours
+          const featuredTours = (data || []).filter(tour => tour.featured).slice(0, 6);
+          setTours(featuredTours.length > 0 ? featuredTours : (data || []).slice(0, 6));
         }
       } catch (error) {
         console.error('Error fetching featured tours:', error);
