@@ -7,7 +7,7 @@ import ReviewsList from '../components/reviews/ReviewsList';
 import BookingForm from '../components/booking/BookingForm';
 
 const TourDetail: React.FC = () => {
-  const { category, id } = useParams();
+  const { category, id: tourSlug } = useParams();
   const navigate = useNavigate();
   const [tour, setTour] = useState<TourPackage | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -20,8 +20,8 @@ const TourDetail: React.FC = () => {
   useEffect(() => {
     const fetchTour = async () => {
       try {
-        if (id) {
-          const { data, error } = await db.getTourPackage(id);
+        if (tourSlug) {
+          const { data, error } = await db.getTourPackageBySlug(tourSlug);
           
           if (error) {
             console.error('Error fetching tour:', error);
@@ -39,9 +39,10 @@ const TourDetail: React.FC = () => {
     };
 
     const fetchReviews = async () => {
-      if (id) {
+      // Only fetch reviews after we have the tour data with the actual ID
+      if (tour?.id) {
         try {
-          const { data, error } = await db.getTourReviews(id);
+          const { data, error } = await db.getTourReviews(tour.id);
           
           if (error) {
             console.error('Error fetching reviews:', error);
@@ -62,9 +63,31 @@ const TourDetail: React.FC = () => {
     };
 
     fetchTour();
-    fetchReviews();
     getUser();
-  }, [id]);
+  }, [tourSlug]);
+
+  // Separate effect for fetching reviews after tour is loaded
+  useEffect(() => {
+    if (tour?.id) {
+      const fetchReviews = async () => {
+        try {
+          const { data, error } = await db.getTourReviews(tour.id);
+          
+          if (error) {
+            console.error('Error fetching reviews:', error);
+            setReviews([]);
+          } else {
+            setReviews(data || []);
+          }
+        } catch (error) {
+          console.error('Error fetching reviews:', error);
+          setReviews([]);
+        }
+      };
+
+      fetchReviews();
+    }
+  }, [tour?.id]);
 
   const handleBookNow = () => {
     if (user) {
