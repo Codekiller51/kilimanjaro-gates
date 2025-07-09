@@ -51,6 +51,233 @@ try {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Export auth for authentication operations
+export const auth = supabase.auth;
+
+// Database operations for client-side use
+export const db = {
+  // Profile operations
+  getProfile: async (userId: string) => {
+    return await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+  },
+
+  updateProfile: async (userId: string, updates: any) => {
+    return await supabase
+      .from('profiles')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', userId)
+      .select()
+      .single();
+  },
+
+  // Tour package operations
+  getTourPackages: async () => {
+    return await supabase
+      .from('tour_packages')
+      .select('*')
+      .eq('active', true)
+      .order('created_at', { ascending: false });
+  },
+
+  getTourPackage: async (id: string) => {
+    return await supabase
+      .from('tour_packages')
+      .select('*')
+      .eq('id', id)
+      .eq('active', true)
+      .single();
+  },
+
+  getTourAverageRating: async (tourId: string) => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('rating')
+      .eq('tour_id', tourId)
+      .eq('verified', true);
+
+    if (error) return { data: null, error };
+
+    if (!data || data.length === 0) {
+      return { data: { average: 0, count: 0 }, error: null };
+    }
+
+    const average = data.reduce((sum, review) => sum + review.rating, 0) / data.length;
+    return { data: { average: Math.round(average * 10) / 10, count: data.length }, error: null };
+  },
+
+  // Booking operations
+  getUserBookings: async (userId: string) => {
+    return await supabase
+      .from('bookings')
+      .select(`
+        *,
+        tour_packages (
+          title,
+          category,
+          duration,
+          images
+        )
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+  },
+
+  // Contact operations
+  createContactInquiry: async (inquiryData: any) => {
+    return await supabase
+      .from('contact_inquiries')
+      .insert(inquiryData)
+      .select()
+      .single();
+  },
+
+  // Blog operations
+  getBlogPosts: async () => {
+    return await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('published', true)
+      .order('published_at', { ascending: false });
+  },
+
+  // Review operations
+  getAllReviews: async () => {
+    return await supabase
+      .from('reviews')
+      .select(`
+        *,
+        profiles (
+          full_name,
+          avatar_url
+        ),
+        tour_packages (
+          title,
+          category
+        )
+      `)
+      .eq('verified', true)
+      .order('created_at', { ascending: false });
+  },
+
+  getTourReviews: async (tourId: string) => {
+    return await supabase
+      .from('reviews')
+      .select(`
+        *,
+        profiles (
+          full_name,
+          avatar_url
+        )
+      `)
+      .eq('tour_id', tourId)
+      .eq('verified', true)
+      .order('created_at', { ascending: false });
+  },
+
+  getUserReviews: async (userId: string) => {
+    return await supabase
+      .from('reviews')
+      .select(`
+        *,
+        tour_packages (
+          title,
+          category
+        )
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+  },
+
+  getReviewStats: async (tourId: string) => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('rating')
+      .eq('tour_id', tourId)
+      .eq('verified', true);
+
+    if (error) return { data: null, error };
+
+    if (!data || data.length === 0) {
+      return { 
+        data: { 
+          average: 0, 
+          count: 0, 
+          distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } 
+        }, 
+        error: null 
+      };
+    }
+
+    const average = data.reduce((sum, review) => sum + review.rating, 0) / data.length;
+    const distribution = data.reduce((acc, review) => {
+      acc[review.rating] = (acc[review.rating] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    // Ensure all ratings 1-5 are represented
+    for (let i = 1; i <= 5; i++) {
+      if (!distribution[i]) distribution[i] = 0;
+    }
+
+    return { 
+      data: { 
+        average: Math.round(average * 10) / 10, 
+        count: data.length, 
+        distribution 
+      }, 
+      error: null 
+    };
+  },
+
+  createReview: async (reviewData: any) => {
+    return await supabase
+      .from('reviews')
+      .insert(reviewData)
+      .select()
+      .single();
+  },
+
+  // Destination operations
+  getDestinations: async () => {
+    return await supabase
+      .from('destinations')
+      .select('*')
+      .eq('active', true)
+      .order('created_at', { ascending: false });
+  },
+
+  getDestination: async (slug: string) => {
+    return await supabase
+      .from('destinations')
+      .select('*')
+      .eq('slug', slug)
+      .eq('active', true)
+      .single();
+  },
+
+  // Travel info operations
+  getTravelInfo: async () => {
+    return await supabase
+      .from('travel_info')
+      .select('*')
+      .eq('active', true)
+      .order('created_at', { ascending: false });
+  },
+
+  getTravelInfoBySlug: async (slug: string) => {
+    return await supabase
+      .from('travel_info')
+      .select('*')
+      .eq('slug', slug)
+      .eq('active', true)
+      .single();
+  }
+};
+
 // Admin operations
 export const admin: AdminOperations = {
   isAdmin: false,
