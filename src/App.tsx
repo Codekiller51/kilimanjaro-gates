@@ -12,6 +12,8 @@ import Gallery from './pages/Gallery';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
+import Destinations from './pages/Destinations';
+import DestinationDetail from './pages/DestinationDetail';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import About from './pages/About';
@@ -34,6 +36,9 @@ function AppContent() {
             <Route path="/tours" element={<Tours />} />
             <Route path="/tours/:category" element={<Tours />} />
             <Route path="/tours/:category/:id" element={<TourDetail />} />
+            <Route path="/destinations" element={<Destinations />} />
+            <Route path="/destinations/:category" element={<Destinations />} />
+            <Route path="/destinations/:slug" element={<DestinationDetail />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />

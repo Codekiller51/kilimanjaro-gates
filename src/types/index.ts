@@ -106,3 +106,32 @@ export interface ContactInquiry {
   status: 'new' | 'replied' | 'closed';
   created_at: string;
 }
+
+export interface Destination {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  short_description: string;
+  featured_image: string;
+  images: string[];
+  category: 'mountain' | 'park' | 'cultural' | 'coastal' | 'adventure';
+  location: {
+    latitude: number;
+    longitude: number;
+    region: string;
+    district?: string;
+  };
+  best_time_to_visit: string;
+  activities: string[];
+  highlights: string[];
+  difficulty_level: 'easy' | 'moderate' | 'challenging' | 'extreme';
+  duration_recommended: string;
+  entry_requirements: string[];
+  accommodation_options: string[];
+  transportation: string[];
+  featured: boolean;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}

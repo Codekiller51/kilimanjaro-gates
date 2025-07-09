@@ -470,5 +470,71 @@ export const db = {
       .select()
       .single();
     return { data, error };
+  },
+
+  // Destinations
+  getDestinations: async (category?: string, featured?: boolean) => {
+    let query = supabase
+      .from('destinations')
+      .select('*')
+      .eq('active', true)
+      .order('featured', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    if (category && category !== 'all') {
+      query = query.eq('category', category);
+    }
+
+    if (featured) {
+      query = query.eq('featured', true);
+    }
+
+    const { data, error } = await query;
+    return { data, error };
+  },
+
+  getDestination: async (slug: string) => {
+    const { data, error } = await supabase
+      .from('destinations')
+      .select('*')
+      .eq('slug', slug)
+      .eq('active', true)
+      .single();
+    return { data, error };
+  },
+
+  getFeaturedDestinations: async () => {
+    const { data, error } = await supabase
+      .from('destinations')
+      .select('*')
+      .eq('active', true)
+      .eq('featured', true)
+      .order('created_at', { ascending: false })
+      .limit(8);
+    return { data, error };
+  },
+
+  searchDestinations: async (searchTerm?: string, category?: string, difficulty?: string) => {
+    let query = supabase
+      .from('destinations')
+      .select('*')
+      .eq('active', true);
+
+    if (searchTerm) {
+      query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,short_description.ilike.%${searchTerm}%`);
+    }
+
+    if (category && category !== 'all') {
+      query = query.eq('category', category);
+    }
+
+    if (difficulty) {
+      query = query.eq('difficulty_level', difficulty);
+    }
+
+    query = query.order('featured', { ascending: false }).order('created_at', { ascending: false });
+
+    const { data, error } = await query;
+    return { data, error };
   }
 };

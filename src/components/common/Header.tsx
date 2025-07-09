@@ -91,30 +91,43 @@ const Header: React.FC = () => {
       href: '/destinations',
       megaMenu: [
         {
-          category: 'Mount Kilimanjaro',
+          category: 'Mountains & Peaks',
           items: [
-            { name: 'Uhuru Peak (5,895m)', href: '/destinations/kilimanjaro/uhuru-peak' },
-            { name: 'Stella Point (5,756m)', href: '/destinations/kilimanjaro/stella-point' },
-            { name: 'Gilman\'s Point (5,681m)', href: '/destinations/kilimanjaro/gilmans-point' },
-            { name: 'Barranco Wall', href: '/destinations/kilimanjaro/barranco-wall' }
+            { name: 'Mount Kilimanjaro', href: '/destinations/mount-kilimanjaro' },
+            { name: 'Mount Meru', href: '/destinations/mount-meru' },
+            { name: 'Ol Doinyo Lengai', href: '/destinations/ol-doinyo-lengai' },
+            { name: 'Mount Hanang', href: '/destinations/mount-hanang' }
           ]
         },
         {
           category: 'National Parks',
           items: [
-            { name: 'Serengeti National Park', href: '/destinations/serengeti' },
-            { name: 'Ngorongoro Conservation Area', href: '/destinations/ngorongoro' },
-            { name: 'Tarangire National Park', href: '/destinations/tarangire' },
-            { name: 'Lake Manyara National Park', href: '/destinations/manyara' },
-            { name: 'Arusha National Park', href: '/destinations/arusha' }
+            { name: 'Serengeti National Park', href: '/destinations/serengeti-national-park' },
+            { name: 'Ngorongoro Crater', href: '/destinations/ngorongoro-crater' },
+            { name: 'Tarangire National Park', href: '/destinations/tarangire-national-park' },
+            { name: 'Lake Manyara National Park', href: '/destinations/lake-manyara-national-park' },
+            { name: 'Arusha National Park', href: '/destinations/arusha-national-park' },
+            { name: 'Ruaha National Park', href: '/destinations/ruaha-national-park' }
           ]
         },
         {
-          category: 'Cultural Sites',
+          category: 'Cultural & Historical',
           items: [
+            { name: 'Stone Town, Zanzibar', href: '/destinations/stone-town-zanzibar' },
+            { name: 'Maasai Villages', href: '/destinations/maasai-villages' },
+            { name: 'Olduvai Gorge', href: '/destinations/olduvai-gorge' },
             { name: 'Bagamoyo Historical Town', href: '/destinations/bagamoyo' },
-            { name: 'Olduvai Gorge', href: '/destinations/olduvai' },
-            { name: 'Maasai Villages', href: '/destinations/maasai-villages' }
+            { name: 'Kondoa Rock Art Sites', href: '/destinations/kondoa-rock-art' }
+          ]
+        },
+        {
+          category: 'Coastal & Islands',
+          items: [
+            { name: 'Zanzibar Beaches', href: '/destinations/zanzibar-beaches' },
+            { name: 'Pemba Island', href: '/destinations/pemba-island' },
+            { name: 'Mafia Island', href: '/destinations/mafia-island' },
+            { name: 'Dar es Salaam Coast', href: '/destinations/dar-es-salaam-coast' },
+            { name: 'Kilifi & Watamu', href: '/destinations/kilifi-watamu' }
           ]
         }
       ]
