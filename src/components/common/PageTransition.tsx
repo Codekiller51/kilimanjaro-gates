@@ -19,23 +19,37 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children, isLoading }) 
           className="fixed inset-0 bg-white flex items-center justify-center z-40"
         >
           <div className="text-center">
-            {/* Mini Spinning Globe */}
+            {/* Mini Spinning Lines */}
             <div className="flex justify-center mb-6">
               <div className="relative w-16 h-16">
-                {/* Globe Base */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 via-green-400 to-blue-500 animate-spin-slow shadow-lg">
-                  {/* Continents */}
-                  <div className="absolute top-2 left-3 w-4 h-3 bg-green-600 rounded-full opacity-80"></div>
-                  <div className="absolute top-4 right-2 w-3 h-2 bg-green-600 rounded-full opacity-80"></div>
-                  <div className="absolute bottom-3 left-4 w-5 h-2 bg-green-600 rounded-full opacity-80"></div>
-                  <div className="absolute bottom-4 right-3 w-2 h-3 bg-green-600 rounded-full opacity-80"></div>
-                  
-                  {/* Highlight */}
-                  <div className="absolute top-1 left-2 w-3 h-3 bg-white rounded-full opacity-30 blur-sm"></div>
+                {/* Outer spinning lines */}
+                <div className="absolute inset-0 animate-spin">
+                  <div className="absolute top-0 left-1/2 w-0.5 h-8 bg-gradient-to-b from-blue-500 to-transparent transform -translate-x-1/2 rounded-full"></div>
+                  <div className="absolute bottom-0 left-1/2 w-0.5 h-8 bg-gradient-to-t from-green-500 to-transparent transform -translate-x-1/2 rounded-full"></div>
+                  <div className="absolute left-0 top-1/2 h-0.5 w-8 bg-gradient-to-r from-red-500 to-transparent transform -translate-y-1/2 rounded-full"></div>
+                  <div className="absolute right-0 top-1/2 h-0.5 w-8 bg-gradient-to-l from-purple-500 to-transparent transform -translate-y-1/2 rounded-full"></div>
                 </div>
                 
-                {/* Rotating Ring */}
-                <div className="absolute inset-0 rounded-full border-t-2 border-orange-600 animate-spin"></div>
+                {/* Middle spinning lines - opposite direction */}
+                <div className="absolute inset-1 animate-spin-reverse">
+                  <div className="absolute top-0 left-1/2 w-0.5 h-6 bg-gradient-to-b from-yellow-500 to-transparent transform -translate-x-1/2 rounded-full"></div>
+                  <div className="absolute bottom-0 left-1/2 w-0.5 h-6 bg-gradient-to-t from-pink-500 to-transparent transform -translate-x-1/2 rounded-full"></div>
+                  <div className="absolute left-0 top-1/2 h-0.5 w-6 bg-gradient-to-r from-cyan-500 to-transparent transform -translate-y-1/2 rounded-full"></div>
+                  <div className="absolute right-0 top-1/2 h-0.5 w-6 bg-gradient-to-l from-indigo-500 to-transparent transform -translate-y-1/2 rounded-full"></div>
+                </div>
+                
+                {/* Inner spinning lines - fast rotation */}
+                <div className="absolute inset-2 animate-spin-fast">
+                  <div className="absolute top-0 left-1/2 w-0.5 h-4 bg-gradient-to-b from-orange-500 to-transparent transform -translate-x-1/2 rounded-full"></div>
+                  <div className="absolute bottom-0 left-1/2 w-0.5 h-4 bg-gradient-to-t from-teal-500 to-transparent transform -translate-x-1/2 rounded-full"></div>
+                  <div className="absolute left-0 top-1/2 h-0.5 w-4 bg-gradient-to-r from-lime-500 to-transparent transform -translate-y-1/2 rounded-full"></div>
+                  <div className="absolute right-0 top-1/2 h-0.5 w-4 bg-gradient-to-l from-rose-500 to-transparent transform -translate-y-1/2 rounded-full"></div>
+                </div>
+
+                {/* Center dot */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+                </div>
               </div>
             </div>
 

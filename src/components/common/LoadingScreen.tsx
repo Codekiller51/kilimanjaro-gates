@@ -20,26 +20,37 @@ const LoadingScreen: React.FC = () => {
           </p>
         </div>
 
-        {/* Spinning Globe */}
+        {/* Spinning Lines */}
         <div className="flex justify-center mb-8">
           <div className="relative w-32 h-32">
-            {/* Globe Base */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 via-green-400 to-blue-500 animate-spin-slow shadow-2xl">
-              {/* Continents */}
-              <div className="absolute top-4 left-6 w-8 h-6 bg-green-600 rounded-full opacity-80"></div>
-              <div className="absolute top-8 right-4 w-6 h-4 bg-green-600 rounded-full opacity-80"></div>
-              <div className="absolute bottom-6 left-8 w-10 h-5 bg-green-600 rounded-full opacity-80"></div>
-              <div className="absolute bottom-8 right-6 w-4 h-6 bg-green-600 rounded-full opacity-80"></div>
-              
-              {/* Highlight */}
-              <div className="absolute top-2 left-4 w-6 h-6 bg-white rounded-full opacity-30 blur-sm"></div>
+            {/* Outer spinning lines */}
+            <div className="absolute inset-0 animate-spin">
+              <div className="absolute top-0 left-1/2 w-1 h-16 bg-gradient-to-b from-blue-400 to-transparent transform -translate-x-1/2 rounded-full"></div>
+              <div className="absolute bottom-0 left-1/2 w-1 h-16 bg-gradient-to-t from-green-400 to-transparent transform -translate-x-1/2 rounded-full"></div>
+              <div className="absolute left-0 top-1/2 h-1 w-16 bg-gradient-to-r from-red-400 to-transparent transform -translate-y-1/2 rounded-full"></div>
+              <div className="absolute right-0 top-1/2 h-1 w-16 bg-gradient-to-l from-purple-400 to-transparent transform -translate-y-1/2 rounded-full"></div>
             </div>
             
-            {/* Orbit Ring */}
-            <div className="absolute inset-0 rounded-full border-2 border-white border-opacity-30 animate-pulse"></div>
+            {/* Middle spinning lines - opposite direction */}
+            <div className="absolute inset-2 animate-spin-reverse">
+              <div className="absolute top-0 left-1/2 w-0.5 h-12 bg-gradient-to-b from-yellow-400 to-transparent transform -translate-x-1/2 rounded-full"></div>
+              <div className="absolute bottom-0 left-1/2 w-0.5 h-12 bg-gradient-to-t from-pink-400 to-transparent transform -translate-x-1/2 rounded-full"></div>
+              <div className="absolute left-0 top-1/2 h-0.5 w-12 bg-gradient-to-r from-cyan-400 to-transparent transform -translate-y-1/2 rounded-full"></div>
+              <div className="absolute right-0 top-1/2 h-0.5 w-12 bg-gradient-to-l from-indigo-400 to-transparent transform -translate-y-1/2 rounded-full"></div>
+            </div>
             
-            {/* Rotating Ring */}
-            <div className="absolute inset-0 rounded-full border-t-2 border-white animate-spin"></div>
+            {/* Inner spinning lines - fast rotation */}
+            <div className="absolute inset-4 animate-spin-fast">
+              <div className="absolute top-0 left-1/2 w-0.5 h-8 bg-gradient-to-b from-orange-400 to-transparent transform -translate-x-1/2 rounded-full"></div>
+              <div className="absolute bottom-0 left-1/2 w-0.5 h-8 bg-gradient-to-t from-teal-400 to-transparent transform -translate-x-1/2 rounded-full"></div>
+              <div className="absolute left-0 top-1/2 h-0.5 w-8 bg-gradient-to-r from-lime-400 to-transparent transform -translate-y-1/2 rounded-full"></div>
+              <div className="absolute right-0 top-1/2 h-0.5 w-8 bg-gradient-to-l from-rose-400 to-transparent transform -translate-y-1/2 rounded-full"></div>
+            </div>
+
+            {/* Center dot */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+            </div>
           </div>
         </div>
 
@@ -55,16 +66,6 @@ const LoadingScreen: React.FC = () => {
           </p>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 4s linear infinite;
-        }
-      `}</style>
     </div>
   );
 };
