@@ -146,15 +146,15 @@ const Header: React.FC = () => {
     },
     {
       name: 'Travel Info',
-      href: '/travel-info',
+      href: '/travel-info', 
       dropdown: [
-        { name: 'Travel Tips', href: '/travel-info/tips' },
-        { name: 'What to Pack', href: '/travel-info/packing' },
-        { name: 'Visa & Entry Requirements', href: '/travel-info/visa' },
-        { name: 'Best Time to Visit', href: '/travel-info/best-time' },
-        { name: 'Health and Safety', href: '/travel-info/health-safety' },
-        { name: 'Currency & Payments', href: '/travel-info/currency' },
-        { name: 'Weather Information', href: '/travel-info/weather' }
+        { name: 'Essential Travel Tips', href: '/travel-info/essential-travel-tips-tanzania' },
+        { name: 'Packing Guide', href: '/travel-info/packing-guide-tanzania' },
+        { name: 'Visa & Entry Requirements', href: '/travel-info/tanzania-visa-entry-requirements' },
+        { name: 'Best Time to Visit', href: '/travel-info/best-time-visit-tanzania' },
+        { name: 'Health & Safety', href: '/travel-info/health-safety-tanzania' },
+        { name: 'Currency & Payments', href: '/travel-info/currency-payments-tanzania' },
+        { name: 'Weather Information', href: '/travel-info/tanzania-weather-climate' }
       ]
     },
     { name: 'Contact Us', href: '/contact' }

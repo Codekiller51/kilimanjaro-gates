@@ -135,3 +135,26 @@ export interface Destination {
   created_at: string;
   updated_at: string;
 }
+
+export interface TravelInfo {
+  id: string;
+  title: string;
+  slug: string;
+  category: 'tips' | 'packing' | 'visa' | 'best-time' | 'health-safety' | 'currency' | 'weather';
+  content: string;
+  excerpt: string;
+  featured_image: string;
+  tags: string[];
+  quick_facts: QuickFact[];
+  checklist_items?: string[];
+  featured: boolean;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface QuickFact {
+  label: string;
+  value: string;
+  icon?: string;
+}

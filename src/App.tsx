@@ -14,6 +14,8 @@ import Contact from './pages/Contact';
 import Profile from './pages/Profile';
 import Destinations from './pages/Destinations';
 import DestinationDetail from './pages/DestinationDetail';
+import TravelInfo from './pages/TravelInfo';
+import TravelInfoDetail from './pages/TravelInfoDetail';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import About from './pages/About';
@@ -39,6 +41,9 @@ function AppContent() {
             <Route path="/destinations" element={<Destinations />} />
             <Route path="/destinations/:category" element={<Destinations />} />
             <Route path="/destinations/:slug" element={<DestinationDetail />} />
+            <Route path="/travel-info" element={<TravelInfo />} />
+            <Route path="/travel-info/:category" element={<TravelInfo />} />
+            <Route path="/travel-info/:slug" element={<TravelInfoDetail />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />

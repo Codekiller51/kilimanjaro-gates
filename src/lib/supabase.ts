@@ -536,5 +536,67 @@ export const db = {
 
     const { data, error } = await query;
     return { data, error };
+  },
+
+  // Travel Information
+  getTravelInfo: async (category?: string, featured?: boolean) => {
+    let query = supabase
+      .from('travel_info')
+      .select('*')
+      .eq('active', true)
+      .order('featured', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    if (category && category !== 'all') {
+      query = query.eq('category', category);
+    }
+
+    if (featured) {
+      query = query.eq('featured', true);
+    }
+
+    const { data, error } = await query;
+    return { data, error };
+  },
+
+  getTravelInfoBySlug: async (slug: string) => {
+    const { data, error } = await supabase
+      .from('travel_info')
+      .select('*')
+      .eq('slug', slug)
+      .eq('active', true)
+      .single();
+    return { data, error };
+  },
+
+  getFeaturedTravelInfo: async () => {
+    const { data, error } = await supabase
+      .from('travel_info')
+      .select('*')
+      .eq('active', true)
+      .eq('featured', true)
+      .order('created_at', { ascending: false })
+      .limit(4);
+    return { data, error };
+  },
+
+  searchTravelInfo: async (searchTerm?: string, category?: string) => {
+    let query = supabase
+      .from('travel_info')
+      .select('*')
+      .eq('active', true);
+
+    if (searchTerm) {
+      query = query.or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%,excerpt.ilike.%${searchTerm}%`);
+    }
+
+    if (category && category !== 'all') {
+      query = query.eq('category', category);
+    }
+
+    query = query.order('featured', { ascending: false }).order('created_at', { ascending: false });
+
+    const { data, error } = await query;
+    return { data, error };
   }
 };
