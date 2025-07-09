@@ -425,11 +425,20 @@ export const db = {
 
   // Contact inquiries
   createContactInquiry: async (inquiry: Partial<ContactInquiry>) => {
+    console.log('Creating contact inquiry:', inquiry);
+    
     const { data, error } = await supabase
       .from('contact_inquiries')
       .insert(inquiry)
       .select()
       .single();
+    
+    if (error) {
+      console.error('Supabase contact inquiry error:', error);
+    } else {
+      console.log('Contact inquiry created successfully:', data);
+    }
+    
     return { data, error };
   },
 

@@ -32,17 +32,22 @@ const Contact: React.FC = () => {
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
     setSubmitError(null);
+    
+    console.log('Submitting contact form with data:', data);
 
     try {
       const { error } = await db.createContactInquiry(data);
       
       if (error) {
+        console.error('Contact form submission error:', error);
         setSubmitError('Failed to send message. Please try again.');
       } else {
+        console.log('Contact form submitted successfully');
         setSubmitSuccess(true);
         reset();
       }
     } catch (err) {
+      console.error('Unexpected error during contact form submission:', err);
       setSubmitError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
