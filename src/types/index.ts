@@ -13,6 +13,7 @@ export interface User {
 export interface TourPackage {
   id: string;
   title: string;
+  slug: string;
   description: string;
   short_description: string;
   category: 'mountain-climbing' | 'safari' | 'day-trips';

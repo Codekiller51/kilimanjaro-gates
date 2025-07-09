@@ -118,6 +118,16 @@ export const db = {
     return { data, error };
   },
 
+  getTourPackageBySlug: async (slug: string) => {
+    const { data, error } = await supabase
+      .from('tour_packages')
+      .select('*')
+      .eq('slug', slug)
+      .eq('active', true)
+      .maybeSingle();
+    return { data, error };
+  },
+
   getFeaturedTours: async () => {
     const { data, error } = await supabase
       .from('tour_packages')
