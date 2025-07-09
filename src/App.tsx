@@ -12,6 +12,12 @@ import Contact from './pages/Contact';
 import Profile from './pages/Profile';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
+import About from './pages/About';
+import OurStory from './pages/about/OurStory';
+import OurTeam from './pages/about/OurTeam';
+import WhyChooseUs from './pages/about/WhyChooseUs';
+import Testimonials from './pages/about/Testimonials';
+import Certifications from './pages/about/Certifications';
 
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -45,6 +51,12 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/about/story" element={<OurStory />} />
+            <Route path="/about/team" element={<OurTeam />} />
+            <Route path="/about/why-choose-us" element={<WhyChooseUs />} />
+            <Route path="/about/testimonials" element={<Testimonials />} />
+            <Route path="/about/certifications" element={<Certifications />} />
           </Routes>
         </main>
         <Footer />
