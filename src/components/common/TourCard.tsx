@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, Users, Star, MapPin } from 'lucide-react';
 import { TourPackage } from '../../types';
+import { db } from '../../lib/supabase';
 
 interface TourCardProps {
   tour: TourPackage;
@@ -9,6 +10,23 @@ interface TourCardProps {
 }
 
 const TourCard: React.FC<TourCardProps> = ({ tour, featured = false }) => {
+  const [averageRating, setAverageRating] = React.useState(0);
+  const [totalReviews, setTotalReviews] = React.useState(0);
+
+  React.useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const { averageRating: rating, totalReviews: count } = await db.getTourAverageRating(tour.id);
+        setAverageRating(rating);
+        setTotalReviews(count);
+      } catch (error) {
+        console.error('Error fetching tour rating:', error);
+      }
+    };
+
+    fetchRating();
+  }, [tour.id]);
+
   const difficultyColors = {
     easy: 'bg-green-100 text-green-800',
     moderate: 'bg-yellow-100 text-yellow-800',
@@ -59,7 +77,8 @@ const TourCard: React.FC<TourCardProps> = ({ tour, featured = false }) => {
           </div>
           <div className="flex items-center space-x-1">
             <Star className="h-4 w-4 text-yellow-400 fill-current" />
-            <span>4.8</span>
+            <span>{averageRating > 0 ? averageRating.toFixed(1) : 'New'}</span>
+            {totalReviews > 0 && <span className="text-xs">({totalReviews})</span>}
           </div>
         </div>
         

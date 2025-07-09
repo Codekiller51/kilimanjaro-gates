@@ -82,14 +82,19 @@ export const auth = {
 // Helper functions for database operations
 export const db = {
   // Tour packages
-  getTourPackages: async (category?: string) => {
+  getTourPackages: async (category?: string, featured?: boolean) => {
     let query = supabase
       .from('tour_packages')
       .select('*')
+      .eq('active', true)
       .order('created_at', { ascending: false });
 
     if (category) {
       query = query.eq('category', category);
+    }
+
+    if (featured) {
+      query = query.eq('featured', true);
     }
 
     const { data, error } = await query;
@@ -101,7 +106,19 @@ export const db = {
       .from('tour_packages')
       .select('*')
       .eq('id', id)
+      .eq('active', true)
       .maybeSingle();
+    return { data, error };
+  },
+
+  getFeaturedTours: async () => {
+    const { data, error } = await supabase
+      .from('tour_packages')
+      .select('*')
+      .eq('active', true)
+      .eq('featured', true)
+      .order('created_at', { ascending: false })
+      .limit(6);
     return { data, error };
   },
 
@@ -120,7 +137,7 @@ export const db = {
       .from('bookings')
       .select(`
         *,
-        tour_packages (
+        tour_packages!inner (
           title,
           images,
           duration,
@@ -133,6 +150,43 @@ export const db = {
   },
 
   // Reviews
+    }
+    if (filters.minDuration) {
+      query = query.gte('duration', filters.minDuration);
+    }
+    if (filters.maxDuration) {
+          category,
+          price_usd,
+          difficulty
+    }
+    if (filters.minPrice) {
+      query = query.gte('price_usd', filters.minPrice);
+    }
+    if (filters.maxPrice) {
+      query = query.lte('price_usd', filters.maxPrice);
+    }
+  getBooking: async (id: string) => {
+    const { data, error } = await supabase
+      .from('bookings')
+      .select(`
+        *,
+        tour_packages (
+          title,
+          images,
+          duration,
+          category,
+          price_usd,
+          difficulty
+        )
+      `)
+      .eq('id', id)
+      .single();
+    return { data, error };
+  },
+
+    const { data, error } = await query.order('created_at', { ascending: false });
+    return { data, error };
+  },
   getTourReviews: async (tourId: string) => {
     const { data, error } = await supabase
       .from('reviews')
@@ -142,10 +196,61 @@ export const db = {
           full_name,
           avatar_url
         )
+      .eq('verified', true)
       `)
       .eq('tour_id', tourId)
       .order('created_at', { ascending: false });
     return { data, error };
+  createReview: async (review: Partial<Review>) => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .insert(review)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  getUserReviews: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(`
+        *,
+        tour_packages (
+          title,
+          images
+        )
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    return { data, error };
+  },
+
+  updateReview: async (id: string, updates: Partial<Review>) => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  getTourAverageRating: async (tourId: string) => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('rating')
+      .eq('tour_id', tourId)
+      .eq('verified', true);
+    
+    if (error || !data || data.length === 0) {
+      return { averageRating: 0, totalReviews: 0, error };
+    }
+    
+    const totalReviews = data.length;
+    const averageRating = data.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
+    
+    return { averageRating, totalReviews, error: null };
+  },
   },
 
   // Blog posts
@@ -153,8 +258,47 @@ export const db = {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
-      .eq('published', true)
+      .order('published_at', { ascending: false });
       .order('created_at', { ascending: false });
+    return { data, error };
+  },
+  getBlogPost: async (slug: string) => {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('slug', slug)
+      .eq('published', true)
+      .single();
+    return { data, error };
+  },
+
+  getBlogPostsByCategory: async (category: string) => {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('category', category)
+      .eq('published', true)
+      .order('published_at', { ascending: false });
+    return { data, error };
+  },
+
+  searchBlogPosts: async (searchTerm: string) => {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('published', true)
+      .or(`title.ilike.%${searchTerm}%,excerpt.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
+      .order('published_at', { ascending: false });
+    return { data, error };
+  },
+
+  getFeaturedBlogPosts: async (limit: number = 3) => {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('published', true)
+      .order('published_at', { ascending: false })
+      .limit(limit);
     return { data, error };
   },
 
@@ -167,4 +311,33 @@ export const db = {
       .single();
     return { data, error };
   },
+
+  // Profile operations
+  getProfile: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    return { data, error };
+  },
+
+  updateProfile: async (userId: string, updates: Partial<User>) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', userId)
+      .select()
+      .single();
+    return { data, error };
+  },
 };
+  updateBooking: async (id: string, updates: Partial<Booking>) => {
+    const { data, error } = await supabase
+      .from('bookings')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    return { data, error };
+  },

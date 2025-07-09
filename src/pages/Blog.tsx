@@ -18,106 +18,21 @@ const Blog: React.FC = () => {
     const fetchPosts = async () => {
       try {
         const { data, error } = await db.getBlogPosts();
-        if (error) throw error;
         
-        if (data) {
+        if (error) {
+          console.error('Error fetching blog posts:', error);
+          setPosts([]);
+        } else {
           setPosts(data);
           setFilteredPosts(data);
         }
       } catch (error) {
         console.error('Error fetching blog posts:', error);
-        // Fallback to mock data
-        const mockPosts: BlogPost[] = [
-          {
-            id: '1',
-            title: 'Ultimate Guide to Climbing Mount Kilimanjaro',
-            slug: 'ultimate-guide-climbing-kilimanjaro',
-            excerpt: 'Everything you need to know about climbing Africa\'s highest peak, from route selection to gear recommendations.',
-            content: 'Mount Kilimanjaro stands as Africa\'s highest peak and one of the world\'s most accessible high-altitude mountains...',
-            featured_image: 'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
-            author: 'John Safari',
-            category: 'Mountain Climbing',
-            tags: ['kilimanjaro', 'climbing', 'guide', 'preparation'],
-            published: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          {
-            id: '2',
-            title: 'Best Time to Visit Serengeti National Park',
-            slug: 'best-time-visit-serengeti',
-            excerpt: 'Discover the optimal times to visit the Serengeti for wildlife viewing and the Great Migration.',
-            content: 'The Serengeti National Park offers incredible wildlife viewing year-round, but timing your visit can enhance your experience significantly...',
-            featured_image: 'https://images.pexels.com/photos/631292/pexels-photo-631292.jpeg?auto=compress&cs=tinysrgb&w=800',
-            author: 'Mary Wildlife',
-            category: 'Safari',
-            tags: ['serengeti', 'wildlife', 'migration', 'timing'],
-            published: true,
-            created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-            updated_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: '3',
-            title: 'Packing List for Tanzania Safari',
-            slug: 'packing-list-tanzania-safari',
-            excerpt: 'Essential items to pack for your Tanzania safari adventure, from clothing to photography gear.',
-            content: 'Packing for a safari requires careful consideration of climate, activities, and luggage restrictions...',
-            featured_image: 'https://images.pexels.com/photos/1054655/pexels-photo-1054655.jpeg?auto=compress&cs=tinysrgb&w=800',
-            author: 'David Explorer',
-            category: 'Travel Tips',
-            tags: ['packing', 'safari', 'gear', 'preparation'],
-            published: true,
-            created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-            updated_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: '4',
-            title: 'Understanding Maasai Culture in Tanzania',
-            slug: 'understanding-maasai-culture-tanzania',
-            excerpt: 'Learn about the rich traditions and customs of the Maasai people during your visit to Tanzania.',
-            content: 'The Maasai are one of Tanzania\'s most iconic ethnic groups, known for their distinctive culture and traditions...',
-            featured_image: 'https://images.pexels.com/photos/1821644/pexels-photo-1821644.jpeg?auto=compress&cs=tinysrgb&w=800',
-            author: 'Sarah Cultural',
-            category: 'Culture',
-            tags: ['maasai', 'culture', 'traditions', 'tanzania'],
-            published: true,
-            created_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
-            updated_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: '5',
-            title: 'Photography Tips for African Safari',
-            slug: 'photography-tips-african-safari',
-            excerpt: 'Capture stunning wildlife photos with these expert tips for safari photography.',
-            content: 'Safari photography presents unique challenges and opportunities. Here are essential tips to help you capture amazing wildlife photos...',
-            featured_image: 'https://images.pexels.com/photos/1670732/pexels-photo-1670732.jpeg?auto=compress&cs=tinysrgb&w=800',
-            author: 'Mike Photographer',
-            category: 'Travel Tips',
-            tags: ['photography', 'safari', 'wildlife', 'tips'],
-            published: true,
-            created_at: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString(),
-            updated_at: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: '6',
-            title: 'Kilimanjaro Routes Comparison Guide',
-            slug: 'kilimanjaro-routes-comparison-guide',
-            excerpt: 'Compare all Kilimanjaro climbing routes to choose the best one for your adventure.',
-            content: 'Mount Kilimanjaro offers several different routes to the summit, each with its own characteristics, difficulty level, and scenery...',
-            featured_image: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=800',
-            author: 'John Safari',
-            category: 'Mountain Climbing',
-            tags: ['kilimanjaro', 'routes', 'comparison', 'climbing'],
-            published: true,
-            created_at: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000).toISOString(),
-            updated_at: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-        ];
-        
-        setPosts(mockPosts);
-        setFilteredPosts(mockPosts);
+        setPosts([]);
+        setFilteredPosts([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchPosts();

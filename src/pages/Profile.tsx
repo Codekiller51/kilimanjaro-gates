@@ -27,71 +27,82 @@ const Profile: React.FC = () => {
       
       setUser(currentUser);
       
-      // For demo purposes, we'll use mock data
-      const mockProfile = {
-        id: currentUser.id,
-        full_name: currentUser.user_metadata?.full_name || 'John Doe',
-        email: currentUser.email,
-        phone: '+1 (555) 123-4567',
-        nationality: 'United States',
-        avatar_url: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150',
-        created_at: new Date().toISOString(),
-      };
-      
-      setProfile(mockProfile);
-      setFormData({
-        full_name: mockProfile.full_name,
-        phone: mockProfile.phone || '',
-        nationality: mockProfile.nationality || '',
-      });
+      try {
+        // Fetch user profile
+        const { data: profileData, error: profileError } = await db.getProfile(currentUser.id);
+        
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          // Create a basic profile from user data
+          const basicProfile = {
+            id: currentUser.id,
+            full_name: currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User',
+            email: currentUser.email,
+            phone: '',
+            nationality: '',
+            avatar_url: '',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          setProfile(basicProfile);
+          setFormData({
+            full_name: basicProfile.full_name,
+            phone: basicProfile.phone || '',
+            nationality: basicProfile.nationality || '',
+          });
+        } else {
+          setProfile({
+            ...profileData,
+            email: currentUser.email,
+          });
+          setFormData({
+            full_name: profileData.full_name,
+            phone: profileData.phone || '',
+            nationality: profileData.nationality || '',
+          });
+        }
 
-      // Mock bookings data
-      const mockBookings: Booking[] = [
-        {
-          id: '550e8400-e29b-41d4-a716-446655440301',
-          user_id: currentUser.id,
-          tour_id: '550e8400-e29b-41d4-a716-446655440001',
-          start_date: '2024-03-15',
-          participants: 2,
-          total_amount: 5000,
-          currency: 'USD',
-          status: 'confirmed',
-          special_requests: 'Vegetarian meals please',
-          participant_details: [
-            { name: 'John Doe', age: 35, nationality: 'United States' },
-            { name: 'Jane Doe', age: 32, nationality: 'United States' }
-          ],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: '550e8400-e29b-41d4-a716-446655440302',
-          user_id: currentUser.id,
-          tour_id: '550e8400-e29b-41d4-a716-446655440002',
-          start_date: '2024-05-20',
-          participants: 1,
-          total_amount: 1800,
-          currency: 'USD',
-          status: 'pending',
-          participant_details: [
-            { name: 'John Doe', age: 35, nationality: 'United States' }
-          ],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ];
-      
-      setBookings(mockBookings);
-      setLoading(false);
+        // Fetch user bookings
+        const { data: bookingsData, error: bookingsError } = await db.getUserBookings(currentUser.id);
+        
+        if (bookingsError) {
+          console.error('Error fetching bookings:', bookingsError);
+          setBookings([]);
+        } else {
+          setBookings(bookingsData || []);
+        }
+      } catch (error) {
+        console.error('Error loading profile data:', error);
+        setBookings([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     checkUser();
   }, [navigate]);
 
   const handleSave = async () => {
-    // In a real app, this would update the profile in Supabase
-    setProfile({ ...profile, ...formData });
-    setEditing(false);
+    if (!user || !profile) return;
+
+    try {
+      const { data, error } = await db.updateProfile(user.id, {
+        full_name: formData.full_name,
+        phone: formData.phone,
+        nationality: formData.nationality,
+        updated_at: new Date().toISOString(),
+      });
+
+      if (error) {
+        console.error('Error updating profile:', error);
+        // Show error message to user
+      } else {
+        setProfile({ ...profile, ...formData, updated_at: new Date().toISOString() });
+        setEditing(false);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
 
   const handleCancel = () => {

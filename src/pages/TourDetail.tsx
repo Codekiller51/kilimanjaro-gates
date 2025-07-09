@@ -19,87 +19,36 @@ const TourDetail: React.FC = () => {
       try {
         if (id) {
           const { data, error } = await db.getTourPackage(id);
-          if (error) throw error;
-          setTour(data);
+          
+          if (error) {
+            console.error('Error fetching tour:', error);
+            setTour(null);
+          } else {
+            setTour(data);
+          }
         }
       } catch (error) {
         console.error('Error fetching tour:', error);
-        // Fallback to mock data
-        const mockTour: TourPackage = {
-          id: id || '550e8400-e29b-41d4-a716-446655440001',
-          title: 'Kilimanjaro Machame Route',
-          description: 'The Machame route is one of the most popular routes to the summit of Mount Kilimanjaro. Known as the "Whiskey Route," it offers stunning scenery and a high success rate. This challenging trek takes you through diverse ecosystems, from lush rainforest to alpine desert, culminating at Uhuru Peak at 5,895 meters above sea level.',
-          short_description: 'Experience the breathtaking Machame route, known for its stunning scenery and high success rate.',
-          category: 'mountain-climbing',
-          duration: 7,
-          difficulty: 'challenging',
-          price_usd: 2500,
-          price_tzs: 5800000,
-          max_participants: 12,
-          min_participants: 2,
-          images: [
-            'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
-            'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800',
-            'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=800'
-          ],
-          itinerary: [
-            {
-              day: 1,
-              title: 'Machame Gate to Machame Camp',
-              description: 'Begin your journey through the lush rainforest',
-              activities: ['Registration at Machame Gate', 'Forest hike through diverse flora', 'Wildlife spotting opportunities'],
-              accommodation: 'Machame Camp',
-              meals: ['Lunch', 'Dinner'],
-              elevation_gain: 1200,
-              distance: 11
-            },
-            {
-              day: 2,
-              title: 'Machame Camp to Shira Camp',
-              description: 'Emerge from the forest into moorland',
-              activities: ['Moorland trek with stunning views', 'Acclimatization walk', 'Photography opportunities'],
-              accommodation: 'Shira Camp',
-              meals: ['Breakfast', 'Lunch', 'Dinner'],
-              elevation_gain: 850,
-              distance: 5
-            }
-          ],
-          includes: ['Professional mountain guide', 'All meals during the trek', 'Camping equipment', 'Park fees', 'Rescue fees', 'Porters'],
-          excludes: ['International flights', 'Visa fees', 'Personal climbing gear', 'Tips for guides and porters', 'Travel insurance'],
-          requirements: ['Good physical fitness', 'Medical certificate', 'Travel insurance', 'Proper hiking boots'],
-          best_time: 'June - October, December - March',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
-        setTour(mockTour);
+        setTour(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     const fetchReviews = async () => {
       if (id) {
         try {
           const { data, error } = await db.getTourReviews(id);
-          if (error) throw error;
-          setReviews(data || []);
+          
+          if (error) {
+            console.error('Error fetching reviews:', error);
+            setReviews([]);
+          } else {
+            setReviews(data || []);
+          }
         } catch (error) {
           console.error('Error fetching reviews:', error);
-          // Mock reviews
-          setReviews([
-            {
-              id: '550e8400-e29b-41d4-a716-446655440101',
-              user_id: '550e8400-e29b-41d4-a716-446655440201',
-              tour_id: id,
-              rating: 5,
-              title: 'Amazing Experience!',
-              content: 'The Machame route was absolutely incredible. Our guide was knowledgeable and the views were breathtaking.',
-              created_at: new Date().toISOString(),
-              user: {
-                full_name: 'Sarah Johnson',
-                avatar_url: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150'
-              }
-            }
-          ]);
+          setReviews([]);
         }
       }
     };

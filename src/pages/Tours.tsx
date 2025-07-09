@@ -25,95 +25,21 @@ const Tours: React.FC = () => {
     const fetchTours = async () => {
       try {
         const { data, error } = await db.getTourPackages(category);
-        if (error) throw error;
         
-        if (data) {
+        if (error) {
+          console.error('Error fetching tours:', error);
+          setTours([]);
+        } else {
           setTours(data);
           setFilteredTours(data);
         }
       } catch (error) {
         console.error('Error fetching tours:', error);
-        // Fallback to mock data for demo
-        const mockTours: TourPackage[] = [
-          {
-            id: '550e8400-e29b-41d4-a716-446655440001',
-            title: 'Kilimanjaro Machame Route',
-            description: 'The most scenic route to Africa\'s highest peak',
-            short_description: 'Experience the breathtaking Machame route, known for its stunning scenery and high success rate.',
-            category: 'mountain-climbing',
-            duration: 7,
-            difficulty: 'challenging',
-            price_usd: 2500,
-            price_tzs: 5800000,
-            max_participants: 12,
-            min_participants: 2,
-            images: [
-              'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?auto=compress&cs=tinysrgb&w=800',
-              'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800'
-            ],
-            itinerary: [],
-            includes: ['Professional guide', 'All meals', 'Camping equipment'],
-            excludes: ['International flights', 'Visa fees'],
-            requirements: ['Good physical fitness', 'Medical certificate'],
-            best_time: 'June - October, December - March',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          {
-            id: '550e8400-e29b-41d4-a716-446655440002',
-            title: 'Serengeti Safari Adventure',
-            description: 'Witness the Great Migration in the world\'s most famous national park',
-            short_description: 'Join us for an unforgettable safari experience in the legendary Serengeti.',
-            category: 'safari',
-            duration: 5,
-            difficulty: 'easy',
-            price_usd: 1800,
-            price_tzs: 4200000,
-            max_participants: 8,
-            min_participants: 2,
-            images: [
-              'https://images.pexels.com/photos/631292/pexels-photo-631292.jpeg?auto=compress&cs=tinysrgb&w=800',
-              'https://images.pexels.com/photos/1054655/pexels-photo-1054655.jpeg?auto=compress&cs=tinysrgb&w=800'
-            ],
-            itinerary: [],
-            includes: ['4x4 safari vehicle', 'Professional guide', 'All meals'],
-            excludes: ['International flights', 'Alcoholic beverages'],
-            requirements: ['Valid passport', 'Yellow fever vaccination'],
-            best_time: 'Year-round',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          {
-            id: '550e8400-e29b-41d4-a716-446655440003',
-            title: 'Ngorongoro Crater Day Trip',
-            description: 'Explore the world\'s largest inactive volcanic caldera',
-            short_description: 'Discover the incredible wildlife of the Ngorongoro Crater in a single day.',
-            category: 'day-trips',
-            duration: 1,
-            difficulty: 'easy',
-            price_usd: 350,
-            price_tzs: 800000,
-            max_participants: 6,
-            min_participants: 2,
-            images: [
-              'https://images.pexels.com/photos/1230302/pexels-photo-1230302.jpeg?auto=compress&cs=tinysrgb&w=800',
-              'https://images.pexels.com/photos/1821644/pexels-photo-1821644.jpeg?auto=compress&cs=tinysrgb&w=800'
-            ],
-            itinerary: [],
-            includes: ['Transportation', 'Lunch', 'Park fees'],
-            excludes: ['Personal expenses', 'Tips'],
-            requirements: ['Comfortable walking shoes', 'Sunscreen'],
-            best_time: 'Year-round',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ];
-
-        const filtered = category ? mockTours.filter(tour => tour.category === category) : mockTours;
-        setTours(filtered);
-        setFilteredTours(filtered);
+        setTours([]);
+        setFilteredTours([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchTours();
