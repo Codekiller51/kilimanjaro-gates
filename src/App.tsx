@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { usePageTransition } from './hooks/usePageTransition';
+import { useLocation } from 'react-router-dom';
 import LoadingScreen from './components/common/LoadingScreen';
 import PageTransition from './components/common/PageTransition';
 import Header from './components/common/Header';
@@ -28,11 +29,13 @@ import AdminRoutes from './pages/admin/AdminRoutes';
 
 function AppContent() {
   const { isLoading } = usePageTransition();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <PageTransition isLoading={isLoading}>
       <div className="min-h-screen bg-gray-100">
-        <Header />
+        {!isAdminRoute && <Header />}
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -60,7 +63,7 @@ function AppContent() {
             <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>
         </main>
-        <Footer />
+        {!isAdminRoute && <Footer />}
       </div>
     </PageTransition>
   );
