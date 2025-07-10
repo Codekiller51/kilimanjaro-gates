@@ -464,7 +464,6 @@ export const admin: AdminOperations = {
         *,
         profiles (
           full_name,
-          email,
           phone
         ),
         tour_packages (
@@ -501,8 +500,7 @@ export const admin: AdminOperations = {
       .select(`
         *,
         profiles (
-          full_name,
-          email
+          full_name
         ),
         tour_packages (
           title,
@@ -724,7 +722,7 @@ export const admin: AdminOperations = {
           participants,
           profiles (
             full_name,
-            email
+            full_name
           ),
           tour_packages (
             title
@@ -749,7 +747,7 @@ export const admin: AdminOperations = {
           tour_id,
           profiles (
             full_name,
-            email
+            full_name
           ),
           tour_packages (
             title
